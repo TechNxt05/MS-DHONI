@@ -22,7 +22,7 @@ export default function GalleryClient({ images }: GalleryPageProps) {
     const y4 = useTransform(scrollYProgress, [0, 1], [0, 50]);
 
     // Split images into 4 columns
-    const chunkedImages = [[], [], [], []];
+    const chunkedImages: string[][] = [[], [], [], []];
     images.forEach((img, i) => {
         chunkedImages[i % 4].push(img);
     });
