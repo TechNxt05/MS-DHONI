@@ -138,16 +138,23 @@ export default function Hero({ images = [] }: { images?: string[] }) {
             </div>
 
             {/* Scroll Indicator */}
-            <motion.div
-                className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/30"
-                animate={{ y: [0, 10, 0], opacity: [0.3, 1, 0.3] }}
-                transition={{ repeat: Infinity, duration: 2 }}
+            {/* Scroll Indicator - Made Functional & Visible */}
+            <motion.button
+                onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
+                className="absolute bottom-8 left-1/2 -translate-x-1/2 text-zinc-300 hover:text-white cursor-pointer z-30 flex flex-col items-center gap-3"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1, y: [0, 10, 0] }}
+                transition={{
+                    opacity: { delay: 2, duration: 1 },
+                    y: { repeat: Infinity, duration: 2, ease: "easeInOut" }
+                }}
             >
-                <div className="flex flex-col items-center gap-2">
-                    <span className="text-[10px] uppercase tracking-[0.3em]">Scroll</span>
-                    <div className="w-[1px] h-12 bg-gradient-to-b from-white to-transparent" />
-                </div>
-            </motion.div>
+                <span className="text-xs md:text-sm font-bold uppercase tracking-[0.3em] drop-shadow-lg">
+                    Scroll
+                </span>
+                <div className="w-[2px] h-8 md:h-12 bg-gradient-to-b from-csk-yellow to-transparent shadow-[0_0_10px_rgba(253,185,19,0.5)]" />
+                <ArrowDown className="w-5 h-5 -mt-3 text-csk-yellow drop-shadow-lg" />
+            </motion.button>
         </div>
     );
 }
