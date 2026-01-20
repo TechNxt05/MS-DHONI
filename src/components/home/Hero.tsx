@@ -137,7 +137,6 @@ export default function Hero({ images = [] }: { images?: string[] }) {
                 </motion.div>
             </div>
 
-            {/* Scroll Indicator */}
 
         </div>
     );
