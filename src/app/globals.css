@@ -86,3 +86,12 @@ body {
   background: linear-gradient(#0078bc, #fdb913);
   border-radius: 999px;
 }
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

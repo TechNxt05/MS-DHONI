@@ -1,8 +1,8 @@
 'use client';
 
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll } from 'framer-motion';
 import { useRef } from 'react';
-import { Trophy, Calendar, MapPin } from 'lucide-react';
+import { Trophy, Calendar, LucideIcon } from 'lucide-react';
 
 const milestones = [
     {
@@ -43,15 +43,22 @@ const milestones = [
     },
 ];
 
+type Milestone = {
+    year: string;
+    title: string;
+    description: string;
+    icon: LucideIcon;
+};
+
 export default function CareerTimeline() {
     const containerRef = useRef<HTMLDivElement>(null);
-    const { scrollYProgress } = useScroll({
+    useScroll({
         target: containerRef,
         offset: ['start end', 'end start'],
     });
 
     return (
-        <section id="timeline" className="relative py-20 bg-zinc-900 text-white overflow-hidden" ref={containerRef}>
+        <section id="timeline" className="relative py-20 md:py-24 bg-zinc-900 text-white overflow-hidden" ref={containerRef}>
             <div className="container mx-auto px-4">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -67,7 +74,7 @@ export default function CareerTimeline() {
 
                 <div className="relative">
                     {/* Vertical Line */}
-                    <div className="absolute left-1/2 -translate-x-1/2 h-full w-0.5 bg-zinc-700 hidden md:block" />
+                    <div className="absolute left-1/2 -translate-x-1/2 h-full w-0.5 bg-gradient-to-b from-csk-yellow/10 via-zinc-700 to-india-blue/20 hidden md:block" />
 
                     <div className="space-y-12">
                         {milestones.map((milestone, index) => (
@@ -80,7 +87,7 @@ export default function CareerTimeline() {
     );
 }
 
-function TimelineItem({ milestone, index }: { milestone: any; index: number }) {
+function TimelineItem({ milestone, index }: { milestone: Milestone; index: number }) {
     const isEven = index % 2 === 0;
 
     return (
@@ -89,7 +96,7 @@ function TimelineItem({ milestone, index }: { milestone: any; index: number }) {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, delay: index * 0.1 }}
-            className="flex flex-col md:flex-row items-center justify-between gap-8 w-full"
+            className="flex flex-col md:flex-row items-center justify-between gap-5 md:gap-8 w-full"
         >
             {/* Left Box (Content for Even, Spacer for Odd) */}
             <div className="w-full md:w-[45%] text-center md:text-right">
@@ -123,9 +130,9 @@ function TimelineItem({ milestone, index }: { milestone: any; index: number }) {
 }
 
 // Helper to keep code clean - refined for the flex strategy above
-function Content({ milestone, align }: { milestone: any; align: 'left' | 'right' | 'center' }) {
+function Content({ milestone, align }: { milestone: Milestone; align: 'left' | 'right' | 'center' }) {
     return (
-        <div className={`p-6 rounded-2xl bg-zinc-800/50 border border-zinc-700 hover:border-csk-yellow/50 transition-colors backdrop-blur-sm
+        <div className={`p-5 md:p-6 rounded-2xl bg-zinc-800/50 border border-zinc-700 hover:border-csk-yellow/50 transition-colors backdrop-blur-sm
             ${align === 'right' ? 'md:text-right' : 'md:text-left'} text-center`}>
             <span className="inline-block px-3 py-1 mb-2 text-sm font-bold tracking-wider text-black bg-csk-yellow rounded-full">
                 {milestone.year}
