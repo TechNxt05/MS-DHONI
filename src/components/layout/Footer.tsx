@@ -7,6 +7,9 @@ export default function Footer() {
                 <p className="flex items-center justify-center gap-2 mb-4">
                     Made by Amritanshu Yadav
                 </p>
+                <p className="text-sm mb-2">
+                    Tribute-first experience for MS Dhoni, with Fan Universe as a dedicated sub-feature.
+                </p>
                 <p className="text-sm">
                     &copy; {new Date().getFullYear()} MS Dhoni Tribute. All rights reserved.
                 </p>

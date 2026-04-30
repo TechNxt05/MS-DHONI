@@ -13,6 +13,13 @@ A premium, interactive, and cinematic tribute website dedicated to **Mahendra Si
 - **😂 Thala For A Reason**: A fun, interactive meme page that checks if your input equals "7" with audio feedback.
 - **✒️ Fan Guestbook**: A real-time message board for fans to leave tributes (powered by MongoDB).
 - **🏆 Awards & Honors**: A showcase of national honors and cricketing awards.
+- **🔥 Iconic Moments Page**: Dedicated highlight page for defining match moments.
+- **🧠 Captaincy Lab**: Interactive tactical decision scenarios inspired by Dhoni's leadership.
+- **🌌 Fan Universe (Sub Feature)**: Community interaction zone that complements (not replaces) the tribute core.
+- **📰 Free API News Feed**: News route now supports free GNews API integration with fallback data.
+- **⏱️ Pressure Mode**: Last-over chase simulator based on Dhoni's finishing composure.
+- **📅 On This Day**: Daily Dhoni-related history feed from free Wikipedia API (with fallback).
+- **🖼️ Supremacy Cards**: Share-ready tribute card caption generator.
 
 ## 🛠️ Tech Stack
 
@@ -20,6 +27,7 @@ A premium, interactive, and cinematic tribute website dedicated to **Mahendra Si
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 - **Animations**: [Framer Motion](https://www.framer.com/motion/)
 - **Database**: [MongoDB](https://www.mongodb.com/) (via Mongoose)
+- **External API**: [GNews](https://gnews.io/) (free tier)
 - **Icons**: [Lucide React](https://lucide.dev/)
 - **Font**: Google Fonts (Geist, Inter)
 
@@ -44,9 +52,13 @@ A premium, interactive, and cinematic tribute website dedicated to **Mahendra Si
     ```
 
 3.  **Set up Environment Variables**:
-    Create a `.env.local` file in the root directory:
+    Use `.env.example` as the single env template and copy values into Vercel Project Settings:
     ```env
     MONGODB_URI=your_mongodb_connection_string_here
+    GNEWS_API_KEY=your_gnews_api_key_here
+    GNEWS_QUERY=MS Dhoni OR Chennai Super Kings
+    GNEWS_COUNTRY=in
+    GNEWS_MAX_RESULTS=10
     ```
 
 4.  **Run the development server**:

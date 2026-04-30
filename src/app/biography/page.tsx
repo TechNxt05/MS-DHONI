@@ -37,6 +37,15 @@ const bioSections = [
     }
 ];
 
+const verifiedMilestones = [
+    { year: "2004", label: "ODI Debut", value: "23 Dec vs Bangladesh" },
+    { year: "2005", label: "Test Debut", value: "2 Dec vs Sri Lanka" },
+    { year: "2007", label: "T20 World Cup", value: "Champion Captain" },
+    { year: "2011", label: "ODI World Cup", value: "Final 91* at Wankhede" },
+    { year: "2013", label: "Champions Trophy", value: "Completed ICC white-ball treble" },
+    { year: "2020", label: "Intl Retirement", value: "Announced on 15 Aug" },
+];
+
 export default function BiographyPage() {
     return (
         <main className="min-h-screen bg-black text-white">
@@ -62,9 +71,26 @@ export default function BiographyPage() {
                         The <span className="text-csk-yellow">Biography</span>
                     </h1>
                     <p className="text-xl md:text-2xl text-zinc-300 font-light leading-relaxed">
-                        "Ticket Collector to Trophy Collector"
+                        &quot;Ticket Collector to Trophy Collector&quot;
                     </p>
                 </motion.div>
+            </section>
+
+            <section className="container mx-auto px-4 -mt-10 relative z-20 max-w-6xl">
+                <div className="rounded-3xl border border-zinc-800 bg-zinc-950/90 backdrop-blur-xl p-6 md:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
+                    <h2 className="text-2xl md:text-3xl font-black uppercase tracking-wide mb-6">
+                        Verified <span className="text-csk-yellow">Career Milestones</span>
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {verifiedMilestones.map((item) => (
+                            <div key={item.year + item.label} className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-4 hover:border-csk-yellow/50 transition-colors">
+                                <p className="text-csk-yellow text-sm font-black tracking-widest mb-1">{item.year}</p>
+                                <p className="font-bold text-white">{item.label}</p>
+                                <p className="text-sm text-zinc-400 mt-1">{item.value}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </section>
 
             {/* Content Sections */}
@@ -114,7 +140,7 @@ export default function BiographyPage() {
                     className="mt-32 text-center"
                 >
                     <blockquote className="text-3xl md:text-5xl font-black text-zinc-600 leading-tight">
-                        "I tell my wife she is only the third most important thing in my life. I love my country, I love my parents, and then she comes."
+                        &quot;I tell my wife she is only the third most important thing in my life. I love my country, I love my parents, and then she comes.&quot;
                     </blockquote>
                     <cite className="block mt-8 text-xl text-csk-yellow not-italic font-bold">
                         — Mahendra Singh Dhoni

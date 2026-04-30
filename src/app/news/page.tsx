@@ -3,67 +3,36 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ExternalLink, Calendar, RefreshCcw } from 'lucide-react';
-
-/* 
-  Legacy implementation used newsapi.org. 
-  Since API keys might be expired or rate-limited on client-side, 
-  we will simulate a news feed with static data mimicking the API structure 
-  to ensure the "Features" are present as requested, while being robust.
-*/
-
-const MOCK_NEWS = [
-    {
-        source: { id: 'espn-cric-info', name: 'ESPN Cric Info' },
-        author: 'Staff Writer',
-        title: 'MS Dhoni: The art of finishing games',
-        description: 'A deep dive into how Dhoni mastered the chase.',
-        url: 'https://www.espncricinfo.com/',
-        urlToImage: 'https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=800&q=80',
-        publishedAt: '2025-01-15T10:00:00Z',
-        content: 'Mahendra Singh Dhoni remains one of the greatest finishers...'
-    },
-    {
-        source: { id: 'ipl', name: 'IPL T20' },
-        author: 'IPL Media',
-        title: 'CSK Retains Dhoni for another season',
-        description: 'The legend continues for Chennai Super Kings.',
-        url: 'https://www.iplt20.com/',
-        urlToImage: 'https://images.unsplash.com/photo-1624194686522-8664183d2542?w=800&q=80',
-        publishedAt: '2024-12-20T14:30:00Z',
-        content: 'In a move that delighted millions, CSK announced...'
-    },
-    {
-        source: { id: 'icc', name: 'ICC' },
-        author: 'ICC Media',
-        title: 'Looking back at 2011 World Cup Final',
-        description: 'That six will be etched in memory forever.',
-        url: 'https://www.icc-cricket.com/',
-        urlToImage: 'https://images.unsplash.com/photo-1512719994953-eabf5075e51b?w=800&q=80',
-        publishedAt: '2024-04-02T09:00:00Z',
-        content: 'Nuwan Kulasekara to Dhoni, and the rest is history...'
-    },
-    {
-        source: { id: 'hindustan-times', name: 'Hindustan Times' },
-        author: 'Sports Desk',
-        title: 'Dhoni\'s car collection leaves fans in awe',
-        description: 'A look at the vintage bikes and cars in his Ranchi farmhouse.',
-        url: 'https://www.hindustantimes.com/',
-        urlToImage: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800&q=80',
-        publishedAt: '2025-01-10T11:15:00Z',
-        content: 'The former captain has an immense passion for automobiles...'
-    }
-];
+interface NewsArticle {
+    source: { id: string | null; name: string };
+    author: string | null;
+    title: string;
+    description: string;
+    url: string;
+    urlToImage: string;
+    publishedAt: string;
+    content: string;
+}
 
 export default function RecordsPage() {
-    const [articles, setArticles] = useState<any[]>([]);
+    const [articles, setArticles] = useState<NewsArticle[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Simulate API fetch delay
-        setTimeout(() => {
-            setArticles(MOCK_NEWS);
-            setLoading(false);
-        }, 1500);
+        const fetchNews = async () => {
+            try {
+                const res = await fetch('/api/news');
+                const payload = await res.json();
+                if (payload.success) {
+                    setArticles(payload.data);
+                }
+            } catch (error) {
+                console.error('Failed to fetch news', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchNews();
     }, []);
 
     return (
@@ -83,7 +52,7 @@ export default function RecordsPage() {
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-20">
                         <RefreshCcw className="w-12 h-12 text-csk-yellow animate-spin mb-4" />
-                        <p className="text-zinc-500 animate-pulse">Fetching latest updates...</p>
+                        <p className="text-zinc-500 animate-pulse">Fetching latest updates from free APIs...</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
