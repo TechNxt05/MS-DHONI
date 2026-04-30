@@ -30,21 +30,21 @@ export default function Home() {
               <h3 className="text-2xl font-black text-white mb-2">Iconic Moments</h3>
               <p className="text-zinc-400">Relive the chapters that defined Captain Cool.</p>
             </Link>
-            <Link href="/captaincy" className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6 hover:border-india-blue/60 transition-colors">
+            <Link href="/fan-universe" className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6 hover:border-india-blue/60 transition-colors">
               <h3 className="text-2xl font-black text-white mb-2">Captaincy Lab</h3>
-              <p className="text-zinc-400">Interactive tactical scenarios based on Dhoni decisions.</p>
+              <p className="text-zinc-400">Now inside Fan Universe with random scenarios + AI evaluation.</p>
             </Link>
             <Link href="/fan-universe" className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6 hover:border-csk-yellow/60 transition-colors">
               <h3 className="text-2xl font-black text-white mb-2">Fan Universe</h3>
               <p className="text-zinc-400">Community-first sub-feature without diluting tribute focus.</p>
             </Link>
-            <Link href="/pressure-mode" className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6 hover:border-csk-yellow/60 transition-colors">
+            <Link href="/fan-universe" className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6 hover:border-csk-yellow/60 transition-colors">
               <h3 className="text-2xl font-black text-white mb-2">Pressure Mode</h3>
-              <p className="text-zinc-400">Last-over chase simulator inspired by Dhoni finishing mindset.</p>
+              <p className="text-zinc-400">Now inside Fan Universe with random pressure challenges.</p>
             </Link>
-            <Link href="/supremacy-cards" className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6 hover:border-india-blue/60 transition-colors">
+            <Link href="/fan-universe" className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6 hover:border-india-blue/60 transition-colors">
               <h3 className="text-2xl font-black text-white mb-2">Supremacy Cards</h3>
-              <p className="text-zinc-400">Generate share-ready Dhoni tribute card captions.</p>
+              <p className="text-zinc-400">Generate share-ready Dhoni tribute card captions in one place.</p>
             </Link>
           </div>
         </div>

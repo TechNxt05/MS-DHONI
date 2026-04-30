@@ -10,8 +10,6 @@ const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'Bio', href: '/biography' },
     { name: 'Moments', href: '/moments' },
-    { name: 'Captaincy Lab', href: '/captaincy' },
-    { name: 'Pressure Mode', href: '/pressure-mode' },
     { name: 'Timeline', href: '/#timeline' },
     { name: 'Stats', href: '/stats' },
     { name: 'Legacy', href: '/legacy' },

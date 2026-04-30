@@ -2,10 +2,18 @@
 
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Globe2, Sparkles, MessageCircleHeart, MapPinned, Trophy, XCircle } from 'lucide-react';
+import { Brain, Globe2, MessageCircleHeart, MapPinned, Sparkles, Trophy, XCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
-type UniverseTab = 'thala' | 'fanmap' | 'cards';
+type UniverseTab = 'thala' | 'fanmap' | 'cards' | 'pressure' | 'captaincy';
+type ChallengeMode = 'pressure' | 'captaincy';
+type ChallengeQuestion = {
+  id: string;
+  prompt: string;
+  options: string[];
+  bestAnswerIndex: number;
+  context: string;
+};
 
 const specialWords = ['MSD', 'MAHI', 'THALA', 'MAHENDRA', 'MAHENDRA SINGH DHONI', 'MS DHONI', 'CAPTAIN', 'WK', 'WICKET KEEPER', 'FINISHER', 'CSK', 'RPS', 'DHONI', 'SURESH RAINA', 'RAINA', 'JADEJA', 'ASHWIN', 'CHENNAI'];
 const cardTemplates = [
@@ -26,6 +34,16 @@ export default function FanUniversePage() {
   const [submittingPin, setSubmittingPin] = useState(false);
   const [cardName, setCardName] = useState('Thala Fan');
   const [template, setTemplate] = useState(cardTemplates[0]);
+  const [challengeQuestions, setChallengeQuestions] = useState<ChallengeQuestion[]>([]);
+  const [challengeMode, setChallengeMode] = useState<ChallengeMode>('pressure');
+  const [challengeAnswers, setChallengeAnswers] = useState<number[]>([]);
+  const [challengeLoading, setChallengeLoading] = useState(false);
+  const [challengeResult, setChallengeResult] = useState<null | {
+    score: number;
+    total: number;
+    provider: string;
+    feedback: string;
+  }>(null);
 
   const cardText = useMemo(() => `${template}\n- ${cardName}`, [template, cardName]);
 
@@ -38,6 +56,57 @@ export default function FanUniversePage() {
     };
     loadPins();
   }, [activeTab]);
+
+  useEffect(() => {
+    if (activeTab === 'pressure') {
+      generateChallenge('pressure');
+    }
+    if (activeTab === 'captaincy') {
+      generateChallenge('captaincy');
+    }
+  }, [activeTab]);
+
+  const generateChallenge = async (mode: ChallengeMode) => {
+    setChallengeLoading(true);
+    setChallengeResult(null);
+    setChallengeMode(mode);
+    try {
+      const res = await fetch('/api/fan-universe/challenge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'generate', mode }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setChallengeQuestions(data.data.questions);
+        setChallengeAnswers(new Array(data.data.questions.length).fill(-1));
+      }
+    } finally {
+      setChallengeLoading(false);
+    }
+  };
+
+  const evaluateChallenge = async () => {
+    if (!challengeQuestions.length) return;
+    if (challengeAnswers.some((a) => a < 0)) return;
+    setChallengeLoading(true);
+    try {
+      const res = await fetch('/api/fan-universe/challenge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'evaluate',
+          mode: challengeMode,
+          questions: challengeQuestions,
+          answers: challengeAnswers,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) setChallengeResult(data.data);
+    } finally {
+      setChallengeLoading(false);
+    }
+  };
 
   const checkReason = () => {
     const value = thalaInput.trim();
@@ -139,6 +208,8 @@ export default function FanUniversePage() {
           <div className="flex gap-2 overflow-x-auto pb-2">
             {[
               { key: 'thala', label: 'Thala 7' },
+              { key: 'pressure', label: 'Pressure Mode' },
+              { key: 'captaincy', label: 'Captaincy Lab' },
               { key: 'fanmap', label: 'Fan Map' },
               { key: 'cards', label: 'Supremacy Cards' },
             ].map((tab) => (
@@ -175,6 +246,70 @@ export default function FanUniversePage() {
                   ) : (
                     <div className="flex items-center gap-3"><XCircle className="text-red-400" /><p>Not Thala enough... try again.</p></div>
                   )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {(activeTab === 'pressure' || activeTab === 'captaincy') && (
+            <div className="mt-5">
+              <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between mb-4">
+                <p className="text-zinc-400 text-sm md:text-base">
+                  Random {activeTab === 'pressure' ? 'death-over chase' : 'leadership'} scenarios with AI evaluation.
+                </p>
+                <button
+                  onClick={() => generateChallenge(activeTab === 'pressure' ? 'pressure' : 'captaincy')}
+                  className="rounded-full px-4 py-2 text-sm font-black bg-zinc-800 border border-zinc-700 hover:border-csk-yellow/60"
+                  disabled={challengeLoading}
+                >
+                  New Random Set
+                </button>
+              </div>
+              <div className="grid gap-3">
+                {challengeQuestions.map((q, qIndex) => (
+                  <article key={q.id} className="rounded-xl border border-zinc-800 bg-zinc-950/50 p-4">
+                    <p className="font-semibold mb-3">{qIndex + 1}. {q.prompt}</p>
+                    <div className="grid gap-2">
+                      {q.options.map((option, idx) => (
+                        <button
+                          key={option}
+                          onClick={() =>
+                            setChallengeAnswers((prev) => {
+                              const next = [...prev];
+                              next[qIndex] = idx;
+                              return next;
+                            })
+                          }
+                          className={`text-left rounded-lg border p-3 transition-colors ${
+                            challengeAnswers[qIndex] === idx
+                              ? 'border-csk-yellow bg-csk-yellow/10'
+                              : 'border-zinc-700 bg-zinc-950'
+                          }`}
+                        >
+                          {option}
+                        </button>
+                      ))}
+                    </div>
+                  </article>
+                ))}
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3 mt-5">
+                <button
+                  onClick={evaluateChallenge}
+                  disabled={challengeLoading || !challengeQuestions.length}
+                  className="rounded-full px-5 py-2 bg-csk-yellow text-black font-black disabled:opacity-60"
+                >
+                  {challengeLoading ? 'Evaluating...' : 'Get Results'}
+                </button>
+                {challengeResult && (
+                  <div className="rounded-xl border border-zinc-700 bg-zinc-900/60 px-4 py-2 text-sm text-zinc-300">
+                    Score: <span className="text-csk-yellow font-black">{challengeResult.score}/{challengeResult.total}</span> | Evaluated by <span className="uppercase">{challengeResult.provider}</span>
+                  </div>
+                )}
+              </div>
+              {challengeResult && (
+                <div className="mt-4 rounded-2xl border border-zinc-800 bg-black/30 p-4">
+                  <p className="text-sm text-zinc-300 whitespace-pre-wrap">{challengeResult.feedback}</p>
                 </div>
               )}
             </div>
@@ -236,6 +371,7 @@ export default function FanUniversePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-zinc-300">
             <p className="rounded-xl border border-zinc-800 p-4 bg-black/20"><Sparkles className="inline mr-2 text-csk-yellow" />Every fan feature links back to a real Dhoni legacy moment.</p>
             <p className="rounded-xl border border-zinc-800 p-4 bg-black/20"><Globe2 className="inline mr-2 text-india-blue" />Community layer is optional and does not overshadow biography/stats/timeline.</p>
+            <p className="rounded-xl border border-zinc-800 p-4 bg-black/20"><Brain className="inline mr-2 text-indigo-400" />Pressure and Captaincy tabs now run AI-assisted performance evaluation.</p>
             <p className="rounded-xl border border-zinc-800 p-4 bg-black/20"><MessageCircleHeart className="inline mr-2 text-rose-400" />Messages are respectful-by-design and tribute themed.</p>
             <p className="rounded-xl border border-zinc-800 p-4 bg-black/20"><MapPinned className="inline mr-2 text-emerald-400" />Future fan map focuses on appreciation, not noise.</p>
           </div>
