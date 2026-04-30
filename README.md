@@ -1,6 +1,6 @@
 # MS Dhoni - The Legend | Cinematic Tribute Website
 
-![MS Dhoni Tribute](https://wallpapercave.com/wp/wp14945415.webp)
+![MS Dhoni Tribute](public/gallery/bca95626ee098b5a1a9d0573fc641227.jpg)
 
 A premium, interactive, and cinematic tribute website dedicated to **Mahendra Singh Dhoni**, celebrating his legacy, achievements, and impact on world cricket. Built with modern web technologies to deliver an immersive fan experience.
 
