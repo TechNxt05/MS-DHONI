@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 const navLinks = [
     { name: 'Home', href: '/' },
@@ -15,10 +16,7 @@ const navLinks = [
     { name: 'Stats', href: '/stats' },
     { name: 'Legacy', href: '/legacy' },
     { name: 'Gallery', href: '/#gallery' },
-    { name: 'Thala 7', href: '/thala' },
     { name: 'Fan Universe', href: '/fan-universe' },
-    { name: 'Fan Map', href: '/fan-map' },
-    { name: 'Cards', href: '/supremacy-cards' },
     { name: 'Awards', href: '/awards' },
     { name: 'News', href: '/news' },
     { name: 'Fans', href: '/fans' },
@@ -28,6 +26,12 @@ export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const { scrollY } = useScroll();
+    const pathname = usePathname();
+    const getIsActive = (href: string) => {
+        if (href === '/') return pathname === '/';
+        if (href.startsWith('/#')) return pathname === '/';
+        return pathname === href;
+    };
 
     useMotionValueEvent(scrollY, "change", (latest) => {
         setScrolled(latest > 50);
@@ -55,12 +59,15 @@ export default function Navbar() {
                         </Link>
 
                         {/* Desktop Menu */}
-                        <div className="hidden md:flex items-center gap-1 bg-white/5 rounded-full p-1 border border-white/5 backdrop-blur-md">
-                            {navLinks.map((link) => (
+                        <div className="hidden md:flex items-center gap-1 bg-white/5 rounded-full p-1 border border-white/5 backdrop-blur-md max-w-[64vw] overflow-x-auto">
+                            {navLinks.map((link) => {
+                                const isActive = getIsActive(link.href);
+                                return (
                                 <Link
                                     key={link.name}
                                     href={link.href}
-                                    className="relative px-5 py-2 text-xs font-bold uppercase tracking-widest text-zinc-300 hover:text-black transition-all overflow-hidden group rounded-full"
+                                    className={`relative px-4 py-2 text-xs font-bold uppercase tracking-widest transition-all overflow-hidden group rounded-full whitespace-nowrap ${isActive ? 'text-black' : 'text-zinc-300 hover:text-black'
+                                        }`}
                                     onClick={(e) => {
                                         if (link.href.startsWith('/#') && (window.location.pathname === '/' || window.location.pathname === '')) {
                                             e.preventDefault();
@@ -72,9 +79,11 @@ export default function Navbar() {
                                     }}
                                 >
                                     <span className="relative z-10 group-hover:text-black transition-colors duration-300">{link.name}</span>
-                                    <span className="absolute inset-0 bg-csk-yellow transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center rounded-full" />
+                                    <span className={`absolute inset-0 bg-csk-yellow transition-transform duration-300 origin-center rounded-full ${isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                                        }`} />
                                 </Link>
-                            ))}
+                                );
+                            })}
                         </div>
 
                         {/* Mobile Menu Button */}
@@ -103,7 +112,8 @@ export default function Navbar() {
                             <Link
                                 key={link.name}
                                 href={link.href}
-                                className="text-3xl font-black uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-zinc-500 to-zinc-700 hover:from-csk-yellow hover:to-white transition-all"
+                                className={`text-3xl font-black uppercase tracking-tighter transition-all ${getIsActive(link.href) ? 'text-csk-yellow' : 'text-transparent bg-clip-text bg-gradient-to-r from-zinc-500 to-zinc-700 hover:from-csk-yellow hover:to-white'
+                                    }`}
                                 onClick={() => setIsOpen(false)}
                             >
                                 {link.name}
