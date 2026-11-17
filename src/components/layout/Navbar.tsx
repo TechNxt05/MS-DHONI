@@ -1,158 +1,188 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
+import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'framer-motion';
 import Link from 'next/link';
-import { Menu, X } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import { photo } from '@/lib/photos';
+import { setScrollLocked } from '@/components/fx/SmoothScroll';
+import { cn } from '@/lib/utils';
 
-const navLinks = [
-    { name: 'Home', href: '/' },
-    { name: 'Bio', href: '/biography' },
-    { name: 'Moments', href: '/moments' },
-    { name: 'Timeline', href: '/#timeline' },
-    { name: 'Stats', href: '/stats' },
-    { name: 'Legacy', href: '/legacy' },
-    { name: 'Gallery', href: '/#gallery' },
-    { name: 'Fan Universe', href: '/fan-universe' },
-    { name: 'Awards', href: '/awards' },
-    { name: 'News', href: '/news' },
-    { name: 'Fans', href: '/fans' },
+const primary = [
+  { name: 'Story', href: '/biography' },
+  { name: 'Moments', href: '/moments' },
+  { name: 'Numbers', href: '/stats' },
+  { name: 'Quotes', href: '/legacy' },
+  { name: 'Gallery', href: '/gallery' },
+  { name: 'Fan Universe', href: '/fan-universe' },
 ];
 
+const secondary = [
+  { name: 'On This Day', href: '/on-this-day' },
+  { name: 'The Greatest', href: '/the-greatest' },
+  { name: 'Friends & Duos', href: '/friends' },
+  { name: 'Fan Deck', href: '/fan-deck' },
+  { name: 'Awards', href: '/awards' },
+  { name: 'News', href: '/news' },
+  { name: 'Fan Wall', href: '/fans' },
+];
+
+const all = [{ name: 'Home', href: '/' }, ...primary, ...secondary];
+const menuPhoto = photo('csk-seven-floodlights');
+const EXPO = [0.16, 1, 0.3, 1] as const;
+
 export default function Navbar() {
-    const [isOpen, setIsOpen] = useState(false);
-    const [scrolled, setScrolled] = useState(false);
-    const [activeHomeSection, setActiveHomeSection] = useState<'timeline' | 'gallery' | null>(null);
-    const { scrollY } = useScroll();
-    const pathname = usePathname();
-    const getIsActive = (href: string) => {
-        if (href === '/') return pathname === '/';
-        if (href === '/#timeline') return pathname === '/' && activeHomeSection === 'timeline';
-        if (href === '/#gallery') return pathname === '/' && activeHomeSection === 'gallery';
-        if (href.startsWith('/#')) return false;
-        return pathname === href;
+  const pathname = usePathname();
+  const [openOn, setOpenOn] = useState<string | null>(null);
+  const open = openOn === pathname;
+  const setOpen = (next: boolean | ((o: boolean) => boolean)) =>
+    setOpenOn((typeof next === 'function' ? next(open) : next) ? pathname : null);
+  const [hidden, setHidden] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const { scrollY } = useScroll();
+
+  useMotionValueEvent(scrollY, 'change', (y) => {
+    const prev = scrollY.getPrevious() ?? 0;
+    setScrolled(y > 40);
+    // Get out of the way while reading down; come back on any upward scroll.
+    setHidden(y > 400 && y > prev + 2 && !open);
+  });
+
+  useEffect(() => {
+    setScrollLocked(open);
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpenOn(null);
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      setScrollLocked(false);
     };
+  }, [open]);
 
-    useMotionValueEvent(scrollY, "change", (latest) => {
-        setScrolled(latest > 50);
-    });
+  const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
 
-    useEffect(() => {
-        if (pathname !== '/') {
-            setActiveHomeSection(null);
-            return;
-        }
+  return (
+    <>
+      <motion.header
+        className="fixed inset-x-0 top-0 z-[80]"
+        animate={{ y: hidden ? '-110%' : '0%' }}
+        transition={{ duration: 0.5, ease: EXPO }}
+      >
+        <div
+          className={cn(
+            'mx-auto flex max-w-[1500px] items-center justify-between gap-6 px-4 py-4 transition-[padding] duration-500 sm:px-8',
+            scrolled ? 'md:py-3' : 'md:py-6',
+          )}
+        >
+          <Link href="/" className="group relative z-[2] flex items-baseline gap-1 font-display text-3xl font-black uppercase leading-none" aria-label="MS Dhoni tribute, home">
+            <span className="text-flood transition-colors group-hover:text-gold">MSD</span>
+            <span className="text-gold transition-transform duration-500 group-hover:-rotate-12">7</span>
+          </Link>
 
-        const timeline = document.getElementById('timeline');
-        const gallery = document.getElementById('gallery');
-        if (!timeline && !gallery) return;
-
-        const observer = new IntersectionObserver(
-            (entries) => {
-                const visible = entries
-                    .filter((entry) => entry.isIntersecting)
-                    .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-                if (visible.length === 0) return;
-                const id = visible[0].target.id;
-                if (id === 'timeline' || id === 'gallery') {
-                    setActiveHomeSection(id);
-                }
-            },
-            { threshold: [0.35, 0.55, 0.75], rootMargin: '-120px 0px -35% 0px' }
-        );
-
-        if (timeline) observer.observe(timeline);
-        if (gallery) observer.observe(gallery);
-
-        return () => observer.disconnect();
-    }, [pathname]);
-
-    return (
-        <>
-            <motion.nav
-                initial={{ y: -100 }}
-                animate={{ y: 0 }}
-                transition={{ type: "spring", stiffness: 100, damping: 20 }}
-                className="fixed top-6 inset-x-0 z-50 flex justify-center pointer-events-none"
-            >
-                <div className={`pointer-events-auto transition-all duration-500 ease-out ${scrolled
-                    ? 'w-[94%] md:w-auto bg-black/70 backdrop-blur-2xl border border-white/10 rounded-2xl md:rounded-full shadow-[0_0_40px_rgba(0,0,0,0.5)]'
-                    : 'w-full bg-transparent border-transparent'
-                    }`}>
-                    <div className={`px-4 md:px-6 py-3 flex items-center justify-between gap-4 md:gap-6 transition-all duration-500 ${scrolled ? 'h-16' : 'h-24'} max-w-[1400px] mx-auto w-full`}>
-                        {/* Logo */}
-                        <Link href="/" className="group relative flex items-center gap-2 shrink-0">
-                            <div className="absolute inset-0 bg-csk-yellow/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity rounded-full scale-150" />
-                            <span className="relative text-2xl md:text-3xl font-black uppercase tracking-tighter text-white italic">
-                                MS<span className="text-csk-yellow drop-shadow-[0_0_10px_rgba(253,185,19,0.8)]">D</span><span className="text-india-blue">7</span>
-                            </span>
-                        </Link>
-
-                        {/* Desktop Menu */}
-                        <div className="hidden md:flex items-center gap-1 bg-white/5 rounded-full p-1 border border-white/5 backdrop-blur-md max-w-[72vw] overflow-x-auto no-scrollbar">
-                            {navLinks.map((link) => {
-                                const isActive = getIsActive(link.href);
-                                return (
-                                <Link
-                                    key={link.name}
-                                    href={link.href}
-                                    className={`relative px-3 py-2 text-[11px] font-bold uppercase tracking-wide transition-all overflow-hidden group rounded-full whitespace-nowrap ${isActive ? 'text-black' : 'text-zinc-300 hover:text-black'
-                                        }`}
-                                    onClick={(e) => {
-                                        if (link.href.startsWith('/#') && (window.location.pathname === '/' || window.location.pathname === '')) {
-                                            e.preventDefault();
-                                            document.querySelector(`#${link.href.split('#')[1]}`)?.scrollIntoView({ behavior: 'smooth' });
-                                        } else if (link.href === '/' && (window.location.pathname === '/' || window.location.pathname === '')) {
-                                            e.preventDefault();
-                                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                                        }
-                                    }}
-                                >
-                                    <span className="relative z-10 group-hover:text-black transition-colors duration-300">{link.name}</span>
-                                    <span className={`absolute inset-0 bg-csk-yellow transition-transform duration-300 origin-center rounded-full ${isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
-                                        }`} />
-                                </Link>
-                                );
-                            })}
-                        </div>
-
-                        {/* Mobile Menu Button */}
-                        <div className="md:hidden pointer-events-auto">
-                            <button
-                                className="text-white p-2 hover:bg-white/10 rounded-full transition-colors"
-                                onClick={() => setIsOpen(!isOpen)}
-                            >
-                                {isOpen ? <X size={24} /> : <Menu size={24} />}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </motion.nav>
-
-            {/* Mobile Menu Overlay */}
-            {isOpen && (
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-40 bg-black/95 backdrop-blur-3xl pt-28 px-6 overflow-y-auto"
-                >
-                    <div className="flex flex-col items-center gap-5 pb-12">
-                        {navLinks.map((link) => (
-                            <Link
-                                key={link.name}
-                                href={link.href}
-                                className={`text-2xl font-black uppercase tracking-tighter transition-all ${getIsActive(link.href) ? 'text-csk-yellow' : 'text-transparent bg-clip-text bg-gradient-to-r from-zinc-500 to-zinc-700 hover:from-csk-yellow hover:to-white'
-                                    }`}
-                                onClick={() => setIsOpen(false)}
-                            >
-                                {link.name}
-                            </Link>
-                        ))}
-                    </div>
-                </motion.div>
+          <nav
+            aria-label="Primary"
+            className={cn(
+              'hidden items-center gap-1 rounded-full border px-2 py-1.5 transition-colors duration-500 lg:flex',
+              scrolled ? 'border-flood/10 bg-night/75 backdrop-blur-xl' : 'border-transparent bg-transparent',
             )}
-        </>
-    );
+          >
+            {primary.map((link) => {
+              const active = isActive(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={active ? 'page' : undefined}
+                  className={cn(
+                    'relative rounded-full px-4 py-2 text-[13px] font-semibold uppercase tracking-[0.1em] transition-colors duration-300',
+                    active ? 'text-night' : 'text-chalk hover:text-flood',
+                  )}
+                >
+                  {active && (
+                    <motion.span layoutId="nav-pill" className="absolute inset-0 -z-0 rounded-full bg-gold" transition={{ type: 'spring', stiffness: 380, damping: 32 }} />
+                  )}
+                  <span className="relative">{link.name}</span>
+                </Link>
+              );
+            })}
+          </nav>
+
+          <button
+            type="button"
+            onClick={() => setOpen((o) => !o)}
+            aria-expanded={open}
+            aria-controls="site-menu"
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            className="relative z-[2] flex h-12 items-center gap-3 rounded-full border border-flood/15 bg-night/60 pl-5 pr-4 text-sm font-bold uppercase tracking-[0.12em] text-flood backdrop-blur-xl transition-colors hover:border-gold"
+          >
+            <span className="hidden sm:inline">{open ? 'Close' : 'Menu'}</span>
+            <span className="relative block h-3 w-5">
+              <span className={cn('absolute left-0 h-[2px] w-5 bg-current transition-all duration-500', open ? 'top-1/2 -translate-y-1/2 rotate-45' : 'top-0')} />
+              <span className={cn('absolute left-0 h-[2px] bg-current transition-all duration-500', open ? 'top-1/2 w-5 -translate-y-1/2 -rotate-45' : 'bottom-0 w-3')} />
+            </span>
+          </button>
+        </div>
+      </motion.header>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            id="site-menu"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Site menu"
+            className="fixed inset-0 z-[75] overflow-y-auto bg-night"
+            initial={{ clipPath: 'circle(0% at calc(100% - 3.5rem) 2.5rem)' }}
+            animate={{ clipPath: 'circle(150% at calc(100% - 3.5rem) 2.5rem)' }}
+            exit={{ clipPath: 'circle(0% at calc(100% - 3.5rem) 2.5rem)' }}
+            transition={{ duration: 0.8, ease: EXPO }}
+          >
+            <div className="mx-auto grid min-h-full max-w-[1500px] gap-10 px-4 pb-12 pt-28 sm:px-8 lg:grid-cols-[1.4fr_1fr] lg:items-center">
+              <nav aria-label="Site">
+                <ul>
+                  {all.map((link, i) => (
+                    <li key={link.href} className="overflow-hidden">
+                      <motion.div
+                        initial={{ y: '100%' }}
+                        animate={{ y: '0%' }}
+                        transition={{ duration: 0.8, ease: EXPO, delay: 0.15 + i * 0.04 }}
+                      >
+                        <Link
+                          href={link.href}
+                          onClick={() => setOpen(false)}
+                          aria-current={isActive(link.href) ? 'page' : undefined}
+                          className="group flex items-baseline gap-4 py-1 font-display text-[clamp(2.6rem,7vw,5.5rem)] font-black uppercase leading-[0.95]"
+                        >
+                          <span
+                            className={cn(
+                              'transition-[color,transform] duration-500 ease-[var(--ease-out-expo)] group-hover:translate-x-3 group-hover:text-gold',
+                              isActive(link.href) ? 'text-gold' : 'text-flood',
+                            )}
+                          >
+                            {link.name}
+                          </span>
+                        </Link>
+                      </motion.div>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+              <motion.figure
+                className="relative hidden aspect-[4/5] overflow-hidden rounded-[28px] lg:block"
+                initial={{ opacity: 0, scale: 0.9, rotate: 3 }}
+                animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                transition={{ duration: 1, ease: EXPO, delay: 0.3 }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={menuPhoto.src} alt={menuPhoto.alt} className="h-full w-full object-cover" />
+                <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-night to-transparent p-6 pt-20 font-display text-3xl font-black uppercase leading-none">
+                  Definitely not retired from our hearts.
+                </figcaption>
+              </motion.figure>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
 }

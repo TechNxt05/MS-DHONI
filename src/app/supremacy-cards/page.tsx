@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function SupremacyCardsPage() {
-  redirect("/fan-universe");
+  redirect("/fan-universe?tab=cards");
 }

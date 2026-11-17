@@ -1,144 +1,151 @@
 'use client';
 
-import { motion, useScroll } from 'framer-motion';
-import { useRef } from 'react';
-import { Trophy, Calendar, LucideIcon } from 'lucide-react';
+import { motion, useScroll, useSpring, useTransform, type MotionValue } from 'framer-motion';
+import { useReducedMotion } from '@/lib/motion';
+import { useEffect, useRef, useState } from 'react';
+import { milestones, type Milestone } from '@/lib/dhoni';
+import { SplitReveal, Reveal } from '@/components/fx/primitives';
 
-const milestones = [
-    {
-        year: '2004',
-        title: 'International Debut',
-        description: 'Made his ODI debut against Bangladesh in Chittagong.',
-        icon: Calendar,
-    },
-    {
-        year: '2005',
-        title: 'The Arrival',
-        description: 'Scored 148 vs Pakistan and 183* vs Sri Lanka, announcing himself to the world.',
-        icon: Trophy,
-    },
-    {
-        year: '2007',
-        title: 'T20 World Cup Glory',
-        description: 'Led a young Indian team to victory in the inaugural T20 World Cup in South Africa.',
-        icon: Trophy,
-    },
-    {
-        year: '2011',
-        title: 'World Cup Champion',
-        description: 'The iconic six at Wankhede! India lifts the ODI World Cup after 28 years.',
-        icon: Trophy,
-    },
-    {
-        year: '2013',
-        title: 'Champions Trophy',
-        description: 'Wins the Champions Trophy in England, completing the ICC treble.',
-        icon: Trophy,
-    },
-    {
-        year: '2023',
-        title: 'Note Perfect IPL Win',
-        description: 'Led CSK to their 5th IPL title, solidifying his legacy as the greatest captain.',
-        icon: Trophy,
-    },
-];
-
-type Milestone = {
-    year: string;
-    title: string;
-    description: string;
-    icon: LucideIcon;
-};
+function useIsDesktop() {
+  const [desktop, setDesktop] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 900px)');
+    const update = () => setDesktop(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
+  return desktop;
+}
 
 export default function CareerTimeline() {
-    const containerRef = useRef<HTMLDivElement>(null);
-    useScroll({
-        target: containerRef,
-        offset: ['start end', 'end start'],
-    });
+  const desktop = useIsDesktop();
+  const reduce = useReducedMotion();
+  const pinned = desktop && !reduce;
 
-    return (
-        <section id="timeline" className="relative py-20 md:py-24 bg-zinc-900 text-white overflow-hidden" ref={containerRef}>
-            <div className="container mx-auto px-4">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className="text-center mb-16"
-                >
-                    <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter text-csk-yellow mb-2">
-                        The Journey
-                    </h2>
-                    <div className="h-1 w-20 bg-india-blue mx-auto rounded-full" />
-                </motion.div>
-
-                <div className="relative">
-                    {/* Vertical Line */}
-                    <div className="absolute left-1/2 -translate-x-1/2 h-full w-0.5 bg-gradient-to-b from-csk-yellow/10 via-zinc-700 to-india-blue/20 hidden md:block" />
-
-                    <div className="space-y-12">
-                        {milestones.map((milestone, index) => (
-                            <TimelineItem key={index} milestone={milestone} index={index} />
-                        ))}
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
-}
-
-function TimelineItem({ milestone, index }: { milestone: Milestone; index: number }) {
-    const isEven = index % 2 === 0;
-
-    return (
-        <motion.div
-            initial={{ opacity: 0, x: isEven ? -50 : 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8, delay: index * 0.1 }}
-            className="flex flex-col md:flex-row items-center justify-between gap-5 md:gap-8 w-full"
-        >
-            {/* Left Box (Content for Even, Spacer for Odd) */}
-            <div className="w-full md:w-[45%] text-center md:text-right">
-                {isEven ? (
-                    <Content milestone={milestone} align="right" />
-                ) : (
-                    <div className="hidden md:block" />
-                )}
-            </div>
-
-            {/* Center Icon */}
-            <div className="relative z-10 flex items-center justify-center w-12 h-12 rounded-full bg-csk-yellow text-zinc-900 shadow-lg shadow-csk-yellow/20 shrink-0">
-                <milestone.icon className="w-6 h-6" />
-            </div>
-
-            {/* Right Box (Spacer for Even, Content for Odd) */}
-            <div className="w-full md:w-[45%] text-center md:text-left">
-                {!isEven ? (
-                    <Content milestone={milestone} align="left" />
-                ) : (
-                    <div className="hidden md:block" />
-                )}
-            </div>
-
-            {/* Mobile Content Backup if the above logic hides it */}
-            <div className="md:hidden w-full text-center">
-                {/* This is a bit duplicative, let's refine the structure below for cleaner code */}
-            </div>
-        </motion.div>
-    );
-}
-
-// Helper to keep code clean - refined for the flex strategy above
-function Content({ milestone, align }: { milestone: Milestone; align: 'left' | 'right' | 'center' }) {
-    return (
-        <div className={`p-5 md:p-6 rounded-2xl bg-zinc-800/50 border border-zinc-700 hover:border-csk-yellow/50 transition-colors backdrop-blur-sm
-            ${align === 'right' ? 'md:text-right' : 'md:text-left'} text-center`}>
-            <span className="inline-block px-3 py-1 mb-2 text-sm font-bold tracking-wider text-black bg-csk-yellow rounded-full">
-                {milestone.year}
-            </span>
-            <h3 className="text-xl font-bold text-white mb-2">{milestone.title}</h3>
-            <p className="text-zinc-400 leading-relaxed">{milestone.description}</p>
+  return (
+    <section id="journey" aria-labelledby="journey-title" className="relative bg-night">
+      <div className="mx-auto max-w-[1500px] px-4 pt-28 sm:px-8 md:pt-40">
+        <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-end">
+          <SplitReveal id="journey-title"
+            as="h2"
+            text="Ticket collector to trophy collector"
+            accent={['trophy']}
+            className="font-display text-[clamp(3rem,8vw,6rem)] font-black uppercase leading-[0.85] tracking-[-0.02em]"
+          />
+          <Reveal delay={0.2}>
+            <p className="max-w-[36ch] text-chalk md:text-right">
+              Sixteen years at the top, told in ten nights. {pinned ? 'Keep scrolling; the season moves sideways.' : ''}
+            </p>
+          </Reveal>
         </div>
-    )
+      </div>
+      {pinned ? <PinnedTrack /> : <StackedList />}
+    </section>
+  );
+}
+
+function PinnedTrack() {
+  const ref = useRef<HTMLDivElement>(null);
+  const track = useRef<HTMLDivElement>(null);
+  const [distance, setDistance] = useState(0);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
+  const smooth = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.4 });
+  const x = useTransform(smooth, [0, 1], [0, -distance]);
+  const bar = useTransform(smooth, [0, 1], [0, 1]);
+
+  useEffect(() => {
+    const measure = () => {
+      if (!track.current) return;
+      setDistance(track.current.scrollWidth - window.innerWidth);
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, []);
+
+  return (
+    <div ref={ref} style={{ height: `calc(100vh + ${distance}px)` }} className="relative">
+      <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
+        <motion.div ref={track} style={{ x }} className="flex w-max gap-10 px-8 will-change-transform">
+          {milestones.map((m, i) => (
+            <Panel key={m.year + m.title} m={m} index={i} progress={smooth} />
+          ))}
+          <div className="w-[10vw] shrink-0" />
+        </motion.div>
+
+        {/* Season progress: one tick per milestone. */}
+        <div className="mx-8 mt-10 flex items-center gap-4">
+          <div className="relative h-px flex-1 bg-flood/15">
+            <motion.div className="absolute inset-y-0 left-0 w-full origin-left bg-gold" style={{ scaleX: bar }} />
+          </div>
+          <span className="tnum font-display text-sm font-bold uppercase tracking-[0.2em] text-dust">
+            2004 — 2023
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Panel({ m, index, progress }: { m: Milestone; index: number; progress: MotionValue<number> }) {
+  const n = milestones.length;
+  const center = index / (n - 1);
+  // The photograph drifts against the track for depth.
+  const imgX = useTransform(progress, [center - 0.5, center + 0.5], ['12%', '-12%']);
+  const tall = m.photo.h > m.photo.w;
+
+  return (
+    <article className="group relative grid h-[68vh] w-[min(78vw,1080px)] shrink-0 grid-cols-[1.15fr_1fr] overflow-hidden rounded-[28px] border border-flood/10 bg-pitch">
+      <div className="relative overflow-hidden">
+        <motion.div className="absolute inset-[-8%]" style={{ x: imgX }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={m.photo.src}
+            alt={m.photo.alt}
+            width={m.photo.w}
+            height={m.photo.h}
+            loading="lazy" decoding="async"
+            className={`h-full w-full object-cover transition-transform duration-[1.4s] ease-[var(--ease-out-expo)] group-hover:scale-105 ${tall ? 'object-[50%_28%]' : 'object-center'}`}
+          />
+        </motion.div>
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-pitch" />
+      </div>
+      <div className="relative flex flex-col justify-between p-8 lg:p-12">
+        <span aria-hidden className="text-outline pointer-events-none absolute -right-4 -top-6 font-display text-[11rem] font-black leading-none lg:text-[14rem]">
+          {m.year.slice(2)}
+        </span>
+        <span className="tnum relative font-display text-3xl font-bold text-gold">{m.year}</span>
+        <div className="relative">
+          <h3 className="font-display text-[clamp(2.2rem,3.6vw,3.6rem)] font-black uppercase leading-[0.9]">{m.title}</h3>
+          <p className="mt-5 max-w-[40ch] text-base leading-relaxed text-chalk lg:text-lg">{m.detail}</p>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function StackedList() {
+  return (
+    <ol className="mx-auto mt-12 max-w-[1500px] space-y-6 px-4 pb-10 sm:px-8">
+      {milestones.map((m) => (
+        <li key={m.year + m.title}>
+          <Reveal>
+            <article className="overflow-hidden rounded-3xl border border-flood/10 bg-pitch">
+              <div className="relative aspect-[16/10] overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={m.photo.src} alt={m.photo.alt} width={m.photo.w} height={m.photo.h} loading="lazy" decoding="async" className="h-full w-full object-cover object-top" />
+                <div className="absolute inset-0 bg-gradient-to-t from-pitch via-pitch/10 to-transparent" />
+                <span className="tnum absolute bottom-3 left-5 font-display text-5xl font-black text-gold">{m.year}</span>
+              </div>
+              <div className="p-5 pt-3">
+                <h3 className="font-display text-3xl font-black uppercase leading-none">{m.title}</h3>
+                <p className="mt-3 leading-relaxed text-chalk">{m.detail}</p>
+              </div>
+            </article>
+          </Reveal>
+        </li>
+      ))}
+    </ol>
+  );
 }

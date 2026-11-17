@@ -1,97 +1,174 @@
 @import "tailwindcss";
 
+/*
+ * Floodlit Stadium — a night match seen from the stands.
+ * Near-black sky, warm floodlight white, CSK gold as the light source, India blue as the cool counter-light.
+ */
 @theme {
-  --color-csk-yellow: #FDB913;
-  --color-csk-hover: #EDA800;
-  --color-india-blue: #0078BC;
-  --color-india-hover: #0069A5;
+  --color-night: #06070a;
+  --color-pitch: #0c0e13;
+  --color-stand: #141821;
+  --color-seam: #1f2430;
+  --color-flood: #f4efe3;
+  --color-chalk: #b9b4a8;
+  --color-dust: #8a867d;
+  --color-gold: #fdb913;
+  --color-gold-deep: #c98a00;
+  --color-blue: #3aa0ee;
+  --color-blue-deep: #0b5c9e;
+  --color-leather: #a3161a;
+  --color-turf: #2f7d3a;
 
-  --animate-fade-in: fadeIn 0.5s ease-out;
-  --animate-slide-up: slideUp 0.6s ease-out;
+  /* legacy aliases kept so nothing silently loses colour */
+  --color-csk-yellow: #fdb913;
+  --color-csk-hover: #e5a500;
+  --color-india-blue: #3aa0ee;
+  --color-india-hover: #1f86d6;
 
-  @keyframes fadeIn {
-    0% {
-      opacity: 0;
-    }
+  --font-display: var(--font-big-shoulders), "Arial Narrow", sans-serif;
+  --font-sans: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
 
-    100% {
-      opacity: 1;
-    }
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-marquee: marquee var(--marquee-duration, 40s) linear infinite;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-beam: beam 9s ease-in-out infinite;
+
+  @keyframes marquee {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(-50%, 0, 0); }
   }
 
-  @keyframes slideUp {
-    0% {
-      opacity: 0;
-      transform: translateY(20px);
-    }
+  @keyframes float {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50% { transform: translate3d(0, -10px, 0); }
+  }
 
-    100% {
-      opacity: 1;
-      transform: translateY(0px);
-    }
+  @keyframes beam {
+    0%, 100% { transform: rotate(var(--beam-from, -8deg)); opacity: 0.55; }
+    50% { transform: rotate(var(--beam-to, 6deg)); opacity: 0.9; }
   }
 }
 
 :root {
-  --background: #050505;
-  --foreground: #ededed;
+  color-scheme: dark;
+  --background: var(--color-night);
+  --foreground: var(--color-flood);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--color-night);
+  /* Lenis drives smooth scrolling; keep native behaviour predictable. */
+  scroll-behavior: auto;
+  -webkit-tap-highlight-color: transparent;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
 
 body {
-  background:
-    radial-gradient(circle at 12% 20%, rgba(0, 120, 188, 0.2), transparent 35%),
-    radial-gradient(circle at 88% 10%, rgba(253, 185, 19, 0.18), transparent 35%),
-    radial-gradient(circle at 50% 100%, rgba(255, 255, 255, 0.08), transparent 35%),
-    var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
-  overflow-x: hidden;
+  background: var(--color-night);
+  color: var(--color-flood);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
+  overflow-x: clip;
+  text-rendering: optimizeLegibility;
 }
 
-*::selection {
-  background: rgba(253, 185, 19, 0.35);
-  color: #fff;
+.font-display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  letter-spacing: -0.01em;
 }
 
-::-webkit-scrollbar {
-  width: 10px;
+/* Tabular figures anywhere numbers are compared. */
+.tnum { font-variant-numeric: tabular-nums; }
+
+h1, h2, h3 { text-wrap: balance; }
+p { text-wrap: pretty; }
+
+::selection {
+  background: var(--color-gold);
+  color: var(--color-night);
 }
 
-::-webkit-scrollbar-track {
-  background: #0b0b0b;
+input, textarea { caret-color: var(--color-gold); }
+input::placeholder, textarea::placeholder { color: #8f8b82; }
+
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+  border-radius: 6px;
 }
 
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(#0078bc, #fdb913);
-  border-radius: 999px;
+a { text-underline-offset: 0.22em; text-decoration-thickness: 1px; }
+
+/* Scrollbar: a floodlight pylon. */
+* { scrollbar-width: thin; scrollbar-color: #3a3f4b var(--color-night); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--color-night); }
+::-webkit-scrollbar-thumb { background: #2a2f3a; border-radius: 999px; border: 2px solid var(--color-night); }
+::-webkit-scrollbar-thumb:hover { background: var(--color-gold-deep); }
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Film grain, so the black reads as night sky rather than an empty div. */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: -50%;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  animation: grain 1.2s steps(6) infinite;
 }
 
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+@keyframes grain {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-3%, 2%); }
+  40% { transform: translate(2%, -3%); }
+  60% { transform: translate(-2%, -1%); }
+  80% { transform: translate(3%, 3%); }
+  100% { transform: translate(0, 0); }
 }
 
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+/* Outline display type, used for the giant background numerals. */
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(244, 239, 227, 0.22);
+}
+
+/* Cursor-follow spotlight on interactive panels. Set --mx / --my from JS. */
+.spotlight {
+  position: relative;
+  isolation: isolate;
+}
+.spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 400ms var(--ease-out-quint);
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(253, 185, 19, 0.16), transparent 60%);
+}
+.spotlight:hover::before { opacity: 1; }
+
+/* Hide the native cursor only where the custom one is active. */
+@media (pointer: fine) {
+  html.has-cursor, html.has-cursor * { cursor: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .grain::after { animation: none; }
 }

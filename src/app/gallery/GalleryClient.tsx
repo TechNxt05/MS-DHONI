@@ -1,85 +1,60 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { LayoutGroup, motion } from 'framer-motion';
+import { useMemo, useState } from 'react';
+import PageHero from '@/components/layout/PageHero';
+import { MasonryGrid } from '@/components/home/Gallery';
+import { photo, photos, type PhotoTag } from '@/lib/photos';
+import { cn } from '@/lib/utils';
 
-interface GalleryPageProps {
-    images: string[];
-}
+const filters: { key: PhotoTag | 'all'; label: string }[] = [
+  { key: 'all', label: 'Everything' },
+  { key: 'india', label: 'India blue' },
+  { key: 'csk', label: 'Chennai yellow' },
+  { key: 'trophies', label: 'Trophies' },
+  { key: 'team', label: 'Teammates' },
+  { key: 'commons', label: 'Archive' },
+  { key: 'art', label: 'Fan art' },
+];
 
-export default function GalleryClient({ images }: GalleryPageProps) {
-    const containerRef = useRef(null);
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ['start start', 'end end']
-    });
+export default function GalleryClient() {
+  const [filter, setFilter] = useState<PhotoTag | 'all'>('all');
+  const list = useMemo(() => (filter === 'all' ? photos : photos.filter((p) => p.tag === filter)), [filter]);
+  const count = (k: PhotoTag | 'all') => (k === 'all' ? photos.length : photos.filter((p) => p.tag === k).length);
 
-    // Parallax transforms for columns with different directions/speeds
-    const y1 = useTransform(scrollYProgress, [0, 1], [0, -200]);
-    const y2 = useTransform(scrollYProgress, [0, 1], [0, 100]);
-    const y3 = useTransform(scrollYProgress, [0, 1], [0, -150]);
-    const y4 = useTransform(scrollYProgress, [0, 1], [0, 50]);
-
-    // Split images into 4 columns
-    const chunkedImages: string[][] = [[], [], [], []];
-    images.forEach((img, i) => {
-        chunkedImages[i % 4].push(img);
-    });
-
-    return (
-        <main ref={containerRef} className="min-h-[200vh] bg-black text-white py-32 px-4 overflow-hidden">
-            <div className="fixed top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-900/40 via-black to-black z-0 pointer-events-none" />
-
-            <div className="relative z-10 container mx-auto mb-32 text-center">
-                <motion.h1
-                    className="text-8xl md:text-[10rem] font-black uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-csk-yellow to-yellow-600 opacity-20 select-none cursor-default"
-                >
-                    Moments
-                </motion.h1>
-                <motion.h2
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                    className="text-4xl md:text-6xl font-black uppercase tracking-widest -mt-10 md:-mt-24 relative z-20"
-                >
-                    The <span className="text-csk-yellow">Gallery</span>
-                </motion.h2>
-            </div>
-
-            <div className="relative z-10 container mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 min-h-screen pb-20">
-                <Column images={chunkedImages[0]} y={y1} className="mt-10" />
-                <Column images={chunkedImages[1]} y={y2} className="mt-32" />
-                <Column images={chunkedImages[2]} y={y3} className="mt-0" />
-                <Column images={chunkedImages[3]} y={y4} className="mt-20" />
-            </div>
-        </main>
-    );
-}
-
-function Column({ images, y, className = "" }: { images: string[]; y: any; className?: string }) {
-    return (
-        <motion.div style={{ y }} className={`flex flex-col gap-8 ${className}`}>
-            {images.map((src, i) => (
-                <motion.div
-                    key={i}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true, margin: "100px" }}
-                    transition={{ duration: 0.5 }}
-                    className="group relative rounded-xl overflow-hidden shadow-2xl hover:z-20 transform transition-all duration-300 hover:scale-105 hover:shadow-[0_0_30px_rgba(253,185,19,0.3)]"
-                >
-                    {/* Image - Original Colors */}
-                    <div className="relative w-full">
-                        <img
-                            src={src}
-                            alt="Gallery Image"
-                            className="w-full h-auto object-contain rounded-xl transition-transform duration-500 ease-in-out group-hover:rotate-1"
-                            loading="lazy"
-                        />
-                    </div>
-                </motion.div>
+  return (
+    <main>
+      <PageHero
+        title="The gallery"
+        accent={['gallery']}
+        backdrop={photo('floodlit-strike')}
+        position="50% 20%"
+        intro={`${photos.length} frames from Ranchi to Wankhede to Chepauk. Tap any of them to go full screen.`}
+      />
+      <section className="mx-auto max-w-[1500px] px-4 pb-28 sm:px-8">
+        <LayoutGroup>
+          <div role="radiogroup" aria-label="Filter photos" className="no-scrollbar -mx-4 mb-10 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
+            {filters.map((f) => (
+              <button
+                key={f.key}
+                role="radio"
+                aria-checked={filter === f.key}
+                onClick={() => setFilter(f.key)}
+                className={cn(
+                  'relative shrink-0 rounded-full border px-5 py-2.5 text-sm font-semibold transition-colors',
+                  filter === f.key ? 'border-transparent text-night' : 'border-flood/15 text-chalk hover:text-flood',
+                )}
+              >
+                {filter === f.key && <motion.span layoutId="gallery-filter" className="absolute inset-0 rounded-full bg-gold" transition={{ type: 'spring', stiffness: 380, damping: 32 }} />}
+                <span className="relative">
+                  {f.label} <span className="tnum opacity-60">{count(f.key)}</span>
+                </span>
+              </button>
             ))}
-        </motion.div>
-    )
+          </div>
+        </LayoutGroup>
+        <MasonryGrid key={filter} photos={list} initial={24} />
+      </section>
+    </main>
+  );
 }

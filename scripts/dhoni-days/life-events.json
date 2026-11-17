@@ -1,0 +1,361 @@
+{
+  "events": [
+    {
+      "date": "1981-07-07",
+      "kind": "life",
+      "title": "Born in Ranchi",
+      "description": "Mahendra Singh Dhoni was born in Ranchi, then in Bihar and now in Jharkhand, the youngest of three children of Pan Singh and Devaki Devi.",
+      "highlights": [
+        "birthday"
+      ],
+      "weight": 40,
+      "photo": "portrait-2016",
+      "source": {
+        "name": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/MS_Dhoni"
+      }
+    },
+    {
+      "date": "2005-10-31",
+      "kind": "match",
+      "title": "183* in Jaipur",
+      "description": "Chasing 299 against Sri Lanka at the Sawai Mansingh Stadium, he made 183 not out off 145 balls with 15 fours and 10 sixes. India won by 6 wickets, and it remains the highest ODI score by a wicketkeeper. (Not in the Cricsheet archive; from the published scorecard.)",
+      "highlights": [
+        "hundred",
+        "player-of-the-match",
+        "finisher"
+      ],
+      "weight": 30,
+      "photo": "sahara-power-hit",
+      "source": {
+        "name": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/MS_Dhoni"
+      }
+    },
+    {
+      "date": "2005-12-02",
+      "kind": "match",
+      "title": "Test debut in Chennai",
+      "description": "Test debut against Sri Lanka at Chepauk. He made 30 in a rain-ruined draw. (Not in the Cricsheet archive; from the published scorecard.)",
+      "highlights": [
+        "milestone"
+      ],
+      "weight": 25,
+      "photo": "test-whites",
+      "source": {
+        "name": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/MS_Dhoni"
+      }
+    },
+    {
+      "date": "2010-09-26",
+      "kind": "match",
+      "title": "Champions League T20 champions",
+      "description": "Chennai Super Kings beat Warriors by 8 wickets at the Wanderers, Johannesburg, to win the Champions League T20 in the same year as their first IPL title. (Not in the Cricsheet archive.)",
+      "highlights": [
+        "final-won"
+      ],
+      "weight": 18,
+      "photo": "title-celebration",
+      "source": {
+        "name": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/2010_Champions_League_Twenty20"
+      }
+    },
+    {
+      "date": "2014-10-04",
+      "kind": "match",
+      "title": "Champions League T20, again",
+      "description": "Chennai Super Kings beat Kolkata Knight Riders by 8 wickets in Bengaluru, behind Suresh Raina's 109*, for a second Champions League T20 title. (Not in the Cricsheet archive.)",
+      "highlights": [
+        "final-won"
+      ],
+      "weight": 16,
+      "photo": "raina-embrace",
+      "source": {
+        "name": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/2014_Champions_League_Twenty20"
+      }
+    },
+    {
+      "date": "2009-12-06",
+      "kind": "career",
+      "title": "India reach No. 1 in Tests",
+      "description": "The innings win over Sri Lanka at the Brabourne Stadium, completed on this day, lifted India to the top of the ICC Test rankings for the first time, with Dhoni as captain.",
+      "highlights": [
+        "milestone"
+      ],
+      "weight": 30,
+      "photo": "test-whites",
+      "source": {
+        "name": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/MS_Dhoni"
+      }
+    },
+    {
+      "date": "2008-02-20",
+      "kind": "career",
+      "title": "Chennai's first pick",
+      "description": "At the first IPL player auction, Chennai Super Kings signed Dhoni for US$1.5 million, the highest price of the day. He would captain the franchise for most of the next 16 seasons.",
+      "highlights": [
+        "milestone"
+      ],
+      "weight": 25,
+      "photo": "csk-seven-floodlights",
+      "source": {
+        "name": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/2008_Indian_Premier_League"
+      }
+    },
+    {
+      "date": "2010-07-04",
+      "kind": "life",
+      "title": "Marries Sakshi",
+      "description": "Dhoni married Sakshi Singh Rawat in Dehradun.",
+      "highlights": [
+        "family"
+      ],
+      "weight": 30,
+      "photo": null,
+      "source": {
+        "name": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/MS_Dhoni"
+      }
+    },
+    {
+      "date": "2011-11-01",
+      "kind": "honour",
+      "title": "Lieutenant Colonel Dhoni",
+      "description": "The Territorial Army conferred the honorary rank of Lieutenant Colonel on Dhoni, attached to 106 Para TA battalion. He was the second Indian cricketer after Kapil Dev to receive the honour.",
+      "highlights": [
+        "honour"
+      ],
+      "weight": 30,
+      "photo": null,
+      "source": {
+        "name": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/MS_Dhoni"
+      }
+    },
+    {
+      "date": "2014-12-30",
+      "kind": "career",
+      "title": "Walks away from Test cricket",
+      "description": "Straight after the drawn Melbourne Test, the BCCI announced that Dhoni had retired from Test cricket, with one match of the series left. He finished with 90 Tests, 60 of them as captain.",
+      "highlights": [
+        "milestone",
+        "retirement"
+      ],
+      "weight": 35,
+      "photo": "test-whites",
+      "source": {
+        "name": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/MS_Dhoni"
+      }
+    },
+    {
+      "date": "2015-02-06",
+      "kind": "life",
+      "title": "Ziva is born",
+      "description": "Daughter Ziva was born in Gurgaon while Dhoni was in Australia preparing India's World Cup defence. He stayed with the squad.",
+      "highlights": [
+        "family"
+      ],
+      "weight": 30,
+      "photo": null,
+      "source": {
+        "name": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/MS_Dhoni"
+      }
+    },
+    {
+      "date": "2016-09-30",
+      "kind": "culture",
+      "title": "The Untold Story opens",
+      "description": "M.S. Dhoni: The Untold Story, with Sushant Singh Rajput in the title role, was released in cinemas.",
+      "highlights": [
+        "film"
+      ],
+      "weight": 25,
+      "photo": "hall-of-frames-art",
+      "source": {
+        "name": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/M.S._Dhoni:_The_Untold_Story"
+      }
+    },
+    {
+      "date": "2017-01-04",
+      "kind": "career",
+      "title": "Hands over the white-ball captaincy",
+      "description": "Dhoni stepped down as India's ODI and T20I captain, remaining available as a player. Virat Kohli took over.",
+      "highlights": [
+        "milestone"
+      ],
+      "weight": 30,
+      "photo": "with-kohli",
+      "source": {
+        "name": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/MS_Dhoni"
+      }
+    },
+    {
+      "date": "2018-04-02",
+      "kind": "honour",
+      "title": "Padma Bhushan, in uniform",
+      "description": "Seven years to the day after the World Cup final, Dhoni received the Padma Bhushan, India's third-highest civilian honour, from President Ram Nath Kovind, wearing his Territorial Army uniform.",
+      "highlights": [
+        "honour"
+      ],
+      "weight": 35,
+      "photo": "padma-bhushan-2018",
+      "photoExact": true,
+      "source": {
+        "name": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/MS_Dhoni"
+      }
+    },
+    {
+      "date": "2019-07-31",
+      "kind": "service",
+      "title": "Reports for duty in Kashmir",
+      "description": "Lt. Col. Dhoni joined 106 TA Battalion (Para) in Kashmir for a 15-day stint of patrolling, guard and post duty, staying with the troops until 15 August.",
+      "highlights": [
+        "service"
+      ],
+      "weight": 28,
+      "photo": null,
+      "source": {
+        "name": "Scroll.in",
+        "url": "https://scroll.in/latest/931743/scroll_in"
+      }
+    },
+    {
+      "date": "2020-08-15",
+      "kind": "career",
+      "title": "From 1929 hrs, retired",
+      "description": "On Independence Day, an Instagram post set to Mukesh's 'Main Pal Do Pal Ka Shayar Hoon' ended an international career of 538 matches: “Thanks a lot for ur love and support throughout. From 1929 hrs consider me as Retired.”",
+      "highlights": [
+        "milestone",
+        "retirement"
+      ],
+      "weight": 40,
+      "photo": "gaze-skyward",
+      "source": {
+        "name": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/MS_Dhoni"
+      }
+    },
+    {
+      "date": "2022-03-24",
+      "kind": "career",
+      "title": "Hands Chennai to Jadeja",
+      "description": "Two days before IPL 2022, Chennai Super Kings announced that Dhoni had handed the captaincy to Ravindra Jadeja after 14 seasons in charge.",
+      "highlights": [
+        "milestone"
+      ],
+      "weight": 25,
+      "photo": "csk-trio",
+      "source": {
+        "name": "The National",
+        "url": "https://thenationalnews.com/sport/ipl/2022/03/24/end-of-an-era-as-dhoni-hands-over-chennai-super-kings-captaincy-to-jadeja"
+      }
+    },
+    {
+      "date": "2022-04-30",
+      "kind": "career",
+      "title": "Back in charge",
+      "description": "Eight games into the season, Jadeja gave the Chennai captaincy back to Dhoni so he could focus on his own game.",
+      "highlights": [
+        "milestone"
+      ],
+      "weight": 20,
+      "photo": "csk-keeper-command",
+      "source": {
+        "name": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/2022_Indian_Premier_League"
+      }
+    },
+    {
+      "date": "2024-03-21",
+      "kind": "career",
+      "title": "Passes the armband to Gaikwad",
+      "description": "On the eve of IPL 2024, Chennai named Ruturaj Gaikwad captain, with Dhoni continuing as a player.",
+      "highlights": [
+        "milestone"
+      ],
+      "weight": 22,
+      "photo": "csk-walk-out",
+      "source": {
+        "name": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/2024_Indian_Premier_League"
+      }
+    },
+    {
+      "date": "2025-04-10",
+      "kind": "career",
+      "title": "Captain again, at 43",
+      "description": "With Ruturaj Gaikwad ruled out of IPL 2025 by a fractured elbow, Chennai named Dhoni captain for the rest of the season.",
+      "highlights": [
+        "milestone"
+      ],
+      "weight": 22,
+      "photo": "seven-under-lights",
+      "source": {
+        "name": "Wisden",
+        "url": "https://www.wisden.com/series/ipl-2025/cricket-news/ms-dhoni-named-csk-captain-for-remainder-of-ipl-2025"
+      }
+    },
+    {
+      "date": "2025-06-09",
+      "kind": "honour",
+      "title": "ICC Hall of Fame",
+      "description": "Dhoni was inducted into the ICC Hall of Fame at a ceremony in London, alongside Matthew Hayden, Hashim Amla, Graeme Smith, Daniel Vettori, Sana Mir and Sarah Taylor. He became the 11th Indian inductee.",
+      "highlights": [
+        "honour"
+      ],
+      "weight": 32,
+      "photo": "trophy-haul-art",
+      "source": {
+        "name": "BCCI",
+        "url": "https://www.bcci.tv/news/article/top-honour-ms-dhoni-inducted-into-icc-hall-of-fame"
+      }
+    },
+    {
+      "date": "2018-09-25",
+      "kind": "match",
+      "title": "Captain again, for the 200th time",
+      "description": "With Rohit Sharma rested, Dhoni led India one last time, against Afghanistan in the Asia Cup in Dubai: his 200th ODI as captain. The match was tied. (Not in the Cricsheet archive.)",
+      "highlights": [
+        "milestone"
+      ],
+      "weight": 22,
+      "photo": "keeper-directs-field",
+      "source": {
+        "name": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/2018_Asia_Cup"
+      }
+    }
+  ],
+  "undated": [
+    {
+      "period": "1990s",
+      "title": "From goal to gloves",
+      "description": "At DAV Jawahar Vidya Mandir, Ranchi, he kept goal for the football team until coach Keshav Banerjee sent him to keep wicket for the cricket side."
+    },
+    {
+      "period": "1999–2000",
+      "title": "Ranji Trophy debut",
+      "description": "Made his first-class debut for Bihar in the 1999–2000 Ranji Trophy season."
+    },
+    {
+      "period": "2001–2003",
+      "title": "Ticket examiner at Kharagpur",
+      "description": "Worked as a Travelling Ticket Examiner for Indian Railways at Kharagpur station while playing for the Railways and East Zone."
+    },
+    {
+      "period": "2004",
+      "title": "India A in Zimbabwe and Kenya",
+      "description": "His hitting on the India A tour of Zimbabwe and Kenya pushed him into the senior selectors' plans."
+    }
+  ]
+}

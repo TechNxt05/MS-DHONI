@@ -1,0 +1,435 @@
+{
+ "about": "Partnerships with MS Dhoni computed from Cricsheet ball-by-ball data (ODC-BY). Runs include extras. Coverage: 509 internationals and 277 IPL matches.",
+ "topPartners": [
+  {
+   "name": "SK Raina",
+   "stands": 155,
+   "runs": 5802,
+   "fifties": 31,
+   "hundreds": 10,
+   "best": {
+    "runs": 196,
+    "balls": 156,
+    "date": "2015-03-14",
+    "format": "ODI",
+    "team": "India",
+    "opponent": "Zimbabwe",
+    "venue": "Eden Park, Auckland",
+    "won": true,
+    "unbroken": true
+   }
+  },
+  {
+   "name": "Yuvraj Singh",
+   "stands": 95,
+   "runs": 4095,
+   "fifties": 19,
+   "hundreds": 11,
+   "best": {
+    "runs": 256,
+    "balls": 230,
+    "date": "2017-01-19",
+    "format": "ODI",
+    "team": "India",
+    "opponent": "England",
+    "venue": "Barabati Stadium, Cuttack",
+    "won": true,
+    "unbroken": false
+   }
+  },
+  {
+   "name": "RA Jadeja",
+   "stands": 136,
+   "runs": 3581,
+   "fifties": 18,
+   "hundreds": 3,
+   "best": {
+    "runs": 127,
+    "balls": 101,
+    "date": "2014-01-28",
+    "format": "ODI",
+    "team": "India",
+    "opponent": "New Zealand",
+    "venue": "Seddon Park, Hamilton",
+    "won": false,
+    "unbroken": true
+   }
+  },
+  {
+   "name": "V Kohli",
+   "stands": 79,
+   "runs": 3077,
+   "fifties": 19,
+   "hundreds": 6,
+   "best": {
+    "runs": 198,
+    "balls": 507,
+    "date": "2012-12-13",
+    "format": "Test",
+    "team": "India",
+    "opponent": "England",
+    "venue": "Vidarbha Cricket Association Stadium, Jamtha, Nagpur",
+    "won": false,
+    "unbroken": false
+   }
+  },
+  {
+   "name": "SR Tendulkar",
+   "stands": 41,
+   "runs": 1892,
+   "fifties": 7,
+   "hundreds": 7,
+   "best": {
+    "runs": 172,
+    "balls": 243,
+    "date": "2010-12-16",
+    "format": "Test",
+    "team": "India",
+    "opponent": "South Africa",
+    "venue": "SuperSport Park, Centurion",
+    "won": false,
+    "unbroken": false
+   }
+  },
+  {
+   "name": "R Dravid",
+   "stands": 36,
+   "runs": 1773,
+   "fifties": 7,
+   "hundreds": 4,
+   "best": {
+    "runs": 224,
+    "balls": 306,
+    "date": "2009-11-16",
+    "format": "Test",
+    "team": "India",
+    "opponent": "Sri Lanka",
+    "venue": "Sardar Patel Stadium, Motera, Ahmedabad",
+    "won": false,
+    "unbroken": false
+   }
+  },
+  {
+   "name": "RG Sharma",
+   "stands": 44,
+   "runs": 1746,
+   "fifties": 10,
+   "hundreds": 4,
+   "best": {
+    "runs": 167,
+    "balls": 94,
+    "date": "2013-11-02",
+    "format": "ODI",
+    "team": "India",
+    "opponent": "Australia",
+    "venue": "M Chinnaswamy Stadium, Bangalore",
+    "won": true,
+    "unbroken": false
+   }
+  },
+  {
+   "name": "G Gambhir",
+   "stands": 27,
+   "runs": 1524,
+   "fifties": 9,
+   "hundreds": 4,
+   "best": {
+    "runs": 188,
+    "balls": 184,
+    "date": "2009-02-05",
+    "format": "ODI",
+    "team": "India",
+    "opponent": "Sri Lanka",
+    "venue": "R Premadasa Stadium, Colombo",
+    "won": true,
+    "unbroken": false
+   }
+  },
+  {
+   "name": "VVS Laxman",
+   "stands": 27,
+   "runs": 1361,
+   "fifties": 8,
+   "hundreds": 3,
+   "best": {
+    "runs": 259,
+    "balls": 392,
+    "date": "2010-02-14",
+    "format": "Test",
+    "team": "India",
+    "opponent": "South Africa",
+    "venue": "Eden Gardens, Kolkata",
+    "won": true,
+    "unbroken": true
+   }
+  },
+  {
+   "name": "R Ashwin",
+   "stands": 46,
+   "runs": 1253,
+   "fifties": 6,
+   "hundreds": 1,
+   "best": {
+    "runs": 125,
+    "balls": 100,
+    "date": "2012-12-30",
+    "format": "ODI",
+    "team": "India",
+    "opponent": "Pakistan",
+    "venue": "MA Chidambaram Stadium",
+    "won": false,
+    "unbroken": true
+   }
+  },
+  {
+   "name": "AT Rayudu",
+   "stands": 30,
+   "runs": 1045,
+   "fifties": 8,
+   "hundreds": 1,
+   "best": {
+    "runs": 101,
+    "balls": 53,
+    "date": "2018-04-25",
+    "format": "IPL",
+    "team": "Chennai Super Kings",
+    "opponent": "Royal Challengers Bangalore",
+    "venue": "M Chinnaswamy Stadium, Bengaluru",
+    "won": true,
+    "unbroken": false
+   }
+  },
+  {
+   "name": "KM Jadhav",
+   "stands": 23,
+   "runs": 906,
+   "fifties": 4,
+   "hundreds": 2,
+   "best": {
+    "runs": 141,
+    "balls": 149,
+    "date": "2019-03-02",
+    "format": "ODI",
+    "team": "India",
+    "opponent": "Australia",
+    "venue": "Rajiv Gandhi International Stadium, Uppal",
+    "won": true,
+    "unbroken": true
+   }
+  }
+ ],
+ "focus": {
+  "Suresh Raina": {
+   "name": "SK Raina",
+   "stands": 155,
+   "runs": 5802,
+   "balls": 5453,
+   "fifties": 31,
+   "hundreds": 10,
+   "best": [
+    {
+     "runs": 196,
+     "balls": 156,
+     "date": "2015-03-14",
+     "format": "ODI",
+     "team": "India",
+     "opponent": "Zimbabwe",
+     "venue": "Eden Park, Auckland",
+     "won": true,
+     "unbroken": true
+    },
+    {
+     "runs": 169,
+     "balls": 143,
+     "date": "2011-09-11",
+     "format": "ODI",
+     "team": "India",
+     "opponent": "England",
+     "venue": "Lord's",
+     "won": false,
+     "unbroken": false
+    },
+    {
+     "runs": 166,
+     "balls": 123,
+     "date": "2008-06-25",
+     "format": "ODI",
+     "team": "India",
+     "opponent": "Hong Kong",
+     "venue": "National Stadium, Karachi",
+     "won": true,
+     "unbroken": false
+    },
+    {
+     "runs": 144,
+     "balls": 101,
+     "date": "2014-08-27",
+     "format": "ODI",
+     "team": "India",
+     "opponent": "England",
+     "venue": "Sophia Gardens, Cardiff",
+     "won": true,
+     "unbroken": false
+    },
+    {
+     "runs": 143,
+     "balls": 141,
+     "date": "2008-08-27",
+     "format": "ODI",
+     "team": "India",
+     "opponent": "Sri Lanka",
+     "venue": "R Premadasa Stadium, Colombo",
+     "won": true,
+     "unbroken": false
+    }
+   ],
+   "matches": 438,
+   "wonTogether": 258,
+   "byTeam": {
+    "Chennai Super Kings": 170,
+    "India": 268
+   }
+  },
+  "Virat Kohli": {
+   "name": "V Kohli",
+   "stands": 79,
+   "runs": 3077,
+   "balls": 3678,
+   "fifties": 19,
+   "hundreds": 6,
+   "best": [
+    {
+     "runs": 198,
+     "balls": 507,
+     "date": "2012-12-13",
+     "format": "Test",
+     "team": "India",
+     "opponent": "England",
+     "venue": "Vidarbha Cricket Association Stadium, Jamtha, Nagpur",
+     "won": false,
+     "unbroken": false
+    },
+    {
+     "runs": 152,
+     "balls": 161,
+     "date": "2010-01-07",
+     "format": "ODI",
+     "team": "India",
+     "opponent": "Bangladesh",
+     "venue": "Shere Bangla National Stadium, Mirpur",
+     "won": true,
+     "unbroken": false
+    },
+    {
+     "runs": 151,
+     "balls": 163,
+     "date": "2016-10-23",
+     "format": "ODI",
+     "team": "India",
+     "opponent": "New Zealand",
+     "venue": "Punjab Cricket Association IS Bindra Stadium, Mohali, Chandigarh",
+     "won": true,
+     "unbroken": false
+    },
+    {
+     "runs": 128,
+     "balls": 157,
+     "date": "2013-02-22",
+     "format": "Test",
+     "team": "India",
+     "opponent": "Australia",
+     "venue": "MA Chidambaram Stadium",
+     "won": true,
+     "unbroken": false
+    },
+    {
+     "runs": 122,
+     "balls": 198,
+     "date": "2012-08-31",
+     "format": "Test",
+     "team": "India",
+     "opponent": "New Zealand",
+     "venue": "M Chinnaswamy Stadium, Bangalore",
+     "won": true,
+     "unbroken": false
+    }
+   ],
+   "matches": 283,
+   "wonTogether": 160,
+   "byTeam": {
+    "India": 283
+   }
+  },
+  "Ravindra Jadeja": {
+   "name": "RA Jadeja",
+   "stands": 136,
+   "runs": 3581,
+   "balls": 3239,
+   "fifties": 18,
+   "hundreds": 3,
+   "best": [
+    {
+     "runs": 127,
+     "balls": 101,
+     "date": "2014-01-28",
+     "format": "ODI",
+     "team": "India",
+     "opponent": "New Zealand",
+     "venue": "Seddon Park, Hamilton",
+     "won": false,
+     "unbroken": true
+    },
+    {
+     "runs": 116,
+     "balls": 104,
+     "date": "2019-07-10",
+     "format": "ODI",
+     "team": "India",
+     "opponent": "New Zealand",
+     "venue": "Old Trafford",
+     "won": false,
+     "unbroken": false
+    },
+    {
+     "runs": 112,
+     "balls": 151,
+     "date": "2011-09-09",
+     "format": "ODI",
+     "team": "India",
+     "opponent": "England",
+     "venue": "The Oval",
+     "won": false,
+     "unbroken": false
+    },
+    {
+     "runs": 96,
+     "balls": 60,
+     "date": "2013-01-15",
+     "format": "ODI",
+     "team": "India",
+     "opponent": "England",
+     "venue": "Nehru Stadium, Kochi",
+     "won": true,
+     "unbroken": false
+    },
+    {
+     "runs": 72,
+     "balls": 56,
+     "date": "2020-10-02",
+     "format": "IPL",
+     "team": "Chennai Super Kings",
+     "opponent": "Sunrisers Hyderabad",
+     "venue": "Dubai International Cricket Stadium",
+     "won": false,
+     "unbroken": false
+    }
+   ],
+   "matches": 360,
+   "wonTogether": 200,
+   "byTeam": {
+    "Chennai Super Kings": 184,
+    "India": 176
+   }
+  }
+ }
+}

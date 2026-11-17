@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function FanMapPage() {
-  redirect("/fan-universe");
+  redirect("/fan-universe?tab=fanmap");
 }

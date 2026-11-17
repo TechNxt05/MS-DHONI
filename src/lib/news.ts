@@ -11,45 +11,45 @@ export interface NewsArticle {
 
 const FALLBACK_NEWS: NewsArticle[] = [
   {
-    source: { id: "espncricinfo", name: "ESPNcricinfo" },
-    author: "Sports Desk",
+    source: { id: "tribute", name: "Tribute Desk" },
+    author: null,
     title: "MS Dhoni and the art of finishing impossible chases",
     description:
       "A breakdown of Dhoni's match awareness and finishing approach in pressure run chases.",
-    url: "https://www.espncricinfo.com/",
+    url: "https://www.espncricinfo.com/cricketers/ms-dhoni-28081",
     urlToImage:
-      "https://images.unsplash.com/photo-1512719994953-eabf5075e51b?w=1200&q=80",
+      "/photos/chase-mode.webp",
     publishedAt: "2026-03-10T10:00:00.000Z",
     content: "Dhoni's finishing ability continues to define modern ODI chases.",
   },
   {
-    source: { id: "icc", name: "ICC" },
-    author: "ICC Editorial",
+    source: { id: "tribute", name: "Tribute Desk" },
+    author: null,
     title: "Reliving the 2011 final six that changed Indian cricket forever",
     description:
       "The Wankhede night remains one of cricket's most emotional championship moments.",
-    url: "https://www.icc-cricket.com/",
+    url: "https://en.wikipedia.org/wiki/2011_Cricket_World_Cup_final",
     urlToImage:
-      "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=1200&q=80",
+      "/photos/world-cup-final-six-2011.webp",
     publishedAt: "2026-04-02T12:00:00.000Z",
     content: "Dhoni's unbeaten 91 in the final remains all-time iconic.",
   },
   {
-    source: { id: "iplt20", name: "IPL" },
-    author: "IPL Media",
+    source: { id: "tribute", name: "Tribute Desk" },
+    author: null,
     title: "Captain Cool: legacy of calm leadership in high-voltage IPL finishes",
     description:
       "How Dhoni's field placements and bowling changes built CSK's title-winning identity.",
-    url: "https://www.iplt20.com/",
+    url: "https://en.wikipedia.org/wiki/MS_Dhoni",
     urlToImage:
-      "https://images.unsplash.com/photo-1624526267942-ab0ff8a3e972?w=1200&q=80",
+      "/photos/csk-keeper-command.webp",
     publishedAt: "2026-04-11T08:30:00.000Z",
     content: "Dhoni's tactical calm has become the CSK blueprint.",
   },
 ];
 
-const DEFAULT_IMAGE =
-  "https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=1200&q=80";
+// Empty: the page swaps in tribute photography when a story has no image.
+const DEFAULT_IMAGE = "";
 
 type GNewsResponse = {
   articles?: Array<{

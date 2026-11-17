@@ -1,49 +1,37 @@
 import mongoose from 'mongoose';
 
 interface MongooseCache {
-    conn: typeof mongoose | null;
-    promise: Promise<typeof mongoose> | null;
+  conn: typeof mongoose | null;
+  promise: Promise<typeof mongoose> | null;
 }
 
-// Global interface to prevent TS errors on global object
 declare global {
-    var mongoose: MongooseCache | undefined;
+  var mongoose: MongooseCache | undefined;
 }
 
-let cached: MongooseCache = global.mongoose || { conn: null, promise: null };
-
-if (!cached) {
-    cached = global.mongoose = { conn: null, promise: null };
-}
+// Reuse one connection across hot reloads and warm serverless invocations.
+const cached: MongooseCache = (global.mongoose ??= { conn: null, promise: null });
 
 async function dbConnect() {
-    const MONGODB_URI = process.env.MONGODB_URI;
-    if (!MONGODB_URI) {
-        throw new Error('Please define the MONGODB_URI environment variable');
-    }
+  const MONGODB_URI = process.env.MONGODB_URI;
+  if (!MONGODB_URI) {
+    throw new Error('Please define the MONGODB_URI environment variable');
+  }
 
-    if (cached.conn) {
-        return cached.conn;
-    }
+  if (cached.conn) return cached.conn;
 
-    if (!cached.promise) {
-        const opts = {
-            bufferCommands: false,
-        };
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(MONGODB_URI, { bufferCommands: false, serverSelectionTimeoutMS: 8000 });
+  }
 
-        cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongoose) => {
-            return mongoose;
-        });
-    }
+  try {
+    cached.conn = await cached.promise;
+  } catch (e) {
+    cached.promise = null;
+    throw e;
+  }
 
-    try {
-        cached.conn = await cached.promise;
-    } catch (e) {
-        cached.promise = null;
-        throw e;
-    }
-
-    return cached.conn;
+  return cached.conn;
 }
 
 export default dbConnect;

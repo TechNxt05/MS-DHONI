@@ -1,131 +1,193 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import Link from 'next/link';
-import { ArrowDown, Sparkles } from 'lucide-react';
-import { useMemo } from 'react';
+import dynamic from 'next/dynamic';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useReducedMotion } from '@/lib/motion';
+import { ArrowDown, Play } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Magnetic } from '@/components/fx/primitives';
+import { scrollToTarget } from '@/components/fx/SmoothScroll';
+import { photo } from '@/lib/photos';
 
-// Array of high-quality hero images
-const heroImages = Array.from({ length: 15 }, (_, i) => `/hero/hero-${i + 1}.jpg`);
+const BallScene = dynamic(() => import('@/components/three/BallScene'), {
+  ssr: false,
+  loading: () => <StaticBall />,
+});
 
-function ShuffleGrid({ images }: { images: string[] }) {
-    const displayImages = useMemo(() => {
-        const sourceImages = images.length > 0 ? images : heroImages;
-        return [...sourceImages].sort((a, b) => a.localeCompare(b)).slice(0, 40);
-    }, [images]);
-
-    return (
-        <div className="absolute inset-0 z-0 overflow-hidden opacity-45">
-            <div className="grid grid-cols-2 md:grid-cols-4 grid-rows-5 gap-3 md:gap-4 h-[120vh] w-[120vw] -ml-[10vw] -mt-[10vh] transform -rotate-6">
-                {displayImages.map((src, index) => (
-                    <motion.div
-                        key={index}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{
-                            opacity: 1,
-                            scale: 1,
-                            y: [0, -20, 0],
-                        }}
-                        transition={{
-                            duration: 5,
-                            delay: index * 0.1,
-                            repeat: Infinity,
-                            repeatType: "reverse",
-                            ease: "easeInOut"
-                        }}
-                        className="relative w-full h-full overflow-hidden rounded-lg brightness-40 hover:brightness-90 transition-all duration-700 group"
-                    >
-                        <div className="absolute inset-0 bg-csk-yellow/20 opacity-0 group-hover:opacity-100 transition-opacity z-10" />
-                        <img
-                            src={src}
-                            alt="Dhoni Moment"
-                            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
-                            loading="eager"
-                        />
-                    </motion.div>
-                ))}
-            </div>
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black" />
-        </div>
-    );
+/** Shown while WebGL loads, and the whole time under reduced motion. */
+function StaticBall() {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div
+        className="aspect-square w-[34%] rounded-full"
+        style={{
+          background:
+            'radial-gradient(circle at 34% 30%, #e0464a 0%, #9c1519 38%, #4d0709 75%, #240305 100%)',
+          boxShadow: 'inset -0.08em -0.1em 0.3em rgba(0,0,0,0.6), 0 0.2em 0.6em rgba(253,185,19,0.18)',
+        }}
+      />
+    </div>
+  );
 }
 
-export default function Hero({ images = [] }: { images?: string[] }) {
-    return (
-        <div className="relative min-h-screen w-full overflow-hidden bg-transparent flex items-center justify-center">
-            {/* Animated Masonry Background */}
-            <ShuffleGrid images={[...heroImages, ...images]} />
+const EXPO = [0.16, 1, 0.3, 1] as const;
+const backdrop = photo('field-marshal');
 
-            {/* Content */}
-            <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-white px-4 max-w-5xl mx-auto py-24 md:py-28">
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8 }}
-                    className="space-y-6"
-                >
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-csk-yellow/40 bg-csk-yellow/10 text-csk-yellow text-xs md:text-sm font-black tracking-wider">
-                        <Sparkles className="w-4 h-4" />
-                        CAPTAIN COOL ERA
-                    </div>
-                    <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: "100px" }}
-                        transition={{ duration: 1, delay: 0.5 }}
-                        className="h-1 bg-csk-yellow mx-auto mb-6"
-                    />
+export default function Hero() {
+  const ref = useRef<HTMLElement>(null);
+  const reduce = useReducedMotion();
+  // Load the 3D ball once the browser is idle after first paint; the static ball stands in until then.
+  const [idle, setIdle] = useState(false);
+  useEffect(() => {
+    const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number; cancelIdleCallback?: (id: number) => void };
+    if (w.requestIdleCallback) {
+      const id = w.requestIdleCallback(() => setIdle(true), { timeout: 1500 });
+      return () => w.cancelIdleCallback?.(id);
+    }
+    const t = setTimeout(() => setIdle(true), 300);
+    return () => clearTimeout(t);
+  }, []);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
+  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '25%']);
+  const bgScale = useTransform(scrollYProgress, [0, 1], [1.08, 1.25]);
+  const textY = useTransform(scrollYProgress, [0, 1], ['0%', '-35%']);
+  const fade = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
-                    <h2 className="text-sm md:text-2xl font-bold uppercase tracking-[0.35em] md:tracking-[0.5em] text-csk-yellow/90 text-shadow-lg">
-                        The Unequalled
-                    </h2>
+  const letter = (ch: string, i: number) => (
+    <span key={i} className="inline-block overflow-hidden align-bottom">
+      <motion.span
+        className="inline-block"
+        initial={reduce ? false : { y: '105%' }}
+        animate={{ y: '0%' }}
+        transition={{ duration: 1.3, ease: EXPO, delay: 0.35 + i * 0.07 }}
+      >
+        {ch}
+      </motion.span>
+    </span>
+  );
 
-                    <h1 className="text-5xl sm:text-6xl md:text-9xl font-black tracking-tighter uppercase mb-6 leading-none">
-                        <span className="bg-clip-text text-transparent bg-gradient-to-b from-white to-zinc-500">
-                            MS Dhoni
-                        </span>
-                    </h1>
+  return (
+    <section ref={ref} className="relative isolate flex min-h-[100svh] items-end overflow-hidden bg-night" aria-labelledby="hero-title">
+      {/* Backdrop photograph, graded down to a night sky. */}
+      <motion.div className="absolute inset-0 -z-20" style={{ y: reduce ? 0 : bgY, scale: reduce ? 1 : bgScale }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={backdrop.src}
+          alt=""
+          width={backdrop.w}
+          height={backdrop.h}
+          fetchPriority="high"
+          className="h-full w-full object-cover object-[70%_30%] opacity-45 grayscale-[35%]"
+        />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_20%,transparent_0%,rgba(6,7,10,0.55)_45%,var(--color-night)_85%)]" />
+        <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-night via-night/80 to-transparent" />
+      </motion.div>
 
-                    <motion.h3
-                        initial={{ opacity: 0, letterSpacing: "0.2em" }}
-                        animate={{ opacity: 1, letterSpacing: "0.5em" }}
-                        transition={{ duration: 1.5, delay: 0.2 }}
-                        className="text-sm md:text-2xl font-bold uppercase mb-8"
-                    >
-                        <span className="text-[#FF9933] drop-shadow-[0_0_10px_rgba(255,153,51,0.5)]">Dynamic</span>
-                        <span className="text-white mx-2 md:mx-3 drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">Hero Of Nation</span>
-                        <span className="text-[#138808] drop-shadow-[0_0_10px_rgba(19,136,8,0.5)]">India</span>
-                    </motion.h3>
+      {/* Floodlight beams from the two towers. */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div
+          className="absolute -left-[10%] -top-[30%] h-[140%] w-[45%] origin-top-left animate-beam bg-[conic-gradient(from_200deg_at_0%_0%,transparent_0deg,rgba(255,226,168,0.16)_14deg,transparent_30deg)] blur-2xl"
+          style={{ ['--beam-from' as string]: '-6deg', ['--beam-to' as string]: '5deg' }}
+        />
+        <div
+          className="absolute -right-[10%] -top-[30%] h-[140%] w-[45%] origin-top-right animate-beam bg-[conic-gradient(from_130deg_at_100%_0%,transparent_0deg,rgba(255,240,210,0.12)_16deg,transparent_32deg)] blur-2xl [animation-delay:-4s]"
+          style={{ ['--beam-from' as string]: '5deg', ['--beam-to' as string]: '-6deg' }}
+        />
+      </div>
 
-                    <p className="max-w-2xl text-base md:text-2xl text-zinc-300 mx-auto leading-relaxed font-light italic">
-                        &quot;I tell my wife she is only the third most important thing in my life. I love my country, I love my parents, and then she comes.&quot;
-                    </p>
-                </motion.div>
+      <motion.div
+        className="relative mx-auto w-full max-w-[1500px] px-4 pb-14 pt-32 sm:px-8 md:pb-20"
+        style={{ y: reduce ? 0 : textY, opacity: fade }}
+      >
+        <h1 id="hero-title" className="font-display uppercase leading-[0.8]">
+          <motion.span
+            className="block text-[clamp(1.6rem,4.4vw,3.6rem)] font-bold tracking-[0.02em] text-chalk"
+            initial={reduce ? false : { opacity: 0, x: -24 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1, ease: EXPO, delay: 0.2 }}
+          >
+            Mahendra Singh
+          </motion.span>
+          <span className="sr-only">Dhoni</span>
+          <span aria-hidden className="flex items-end text-[clamp(6rem,27vw,25rem)] font-black tracking-[-0.03em] text-flood">
+            {letter('D', 0)}
+            {letter('H', 1)}
+            {/* The O is a cricket ball, rendered live. */}
+            <span className="relative inline-block h-[0.74em] w-[0.7em] self-center">
+              <motion.span
+                className="absolute left-1/2 top-1/2 block h-[260%] w-[260%] -translate-x-1/2 -translate-y-1/2"
+                // Opacity only: R3F measures this box, and a CSS scale would freeze the canvas at the wrong size.
+                initial={reduce ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1.2, delay: 0.6 }}
+              >
+                {reduce || !idle ? <StaticBall /> : <BallScene progress={scrollYProgress} className="absolute inset-0" />}
+              </motion.span>
+            </span>
+            {letter('N', 3)}
+            {letter('I', 4)}
+          </span>
+        </h1>
 
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1, duration: 1 }}
-                    className="mt-10 md:mt-12 flex flex-col md:flex-row gap-4 md:gap-6 items-center"
-                >
-                    <Link
-                        href="#timeline"
-                        className="group relative inline-flex items-center gap-3 px-7 py-3.5 bg-csk-yellow text-black font-black text-base md:text-lg uppercase tracking-wider rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(253,185,19,0.3)] hover:shadow-[0_0_30px_rgba(253,185,19,0.6)]"
-                    >
-                        The Journey
-                        <ArrowDown className="w-5 h-5 group-hover:translate-y-1 transition-transform" />
-                    </Link>
+        <div className="mt-8 grid items-end gap-8 md:mt-10 md:grid-cols-[1.1fr_1fr]">
+          <motion.p
+            className="max-w-[46ch] text-lg leading-relaxed text-chalk md:text-xl"
+            initial={reduce ? false : { opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: EXPO, delay: 1.1 }}
+          >
+            A ticket collector from Ranchi who became the calmest man in the loudest stadiums on earth.
+            <span className="text-flood"> Three ICC trophies. Five IPL titles. One unhurried heartbeat.</span>
+          </motion.p>
 
-                    <Link
-                        href="/biography"
-                        className="group inline-flex items-center gap-3 px-7 py-3.5 border border-zinc-700 hover:border-white text-zinc-300 hover:text-white font-bold text-base md:text-lg uppercase tracking-wider rounded-full hover:bg-white/5 transition-all"
-                    >
-                        Read Biography
-                    </Link>
-                </motion.div>
-            </div>
-
-
+          <motion.div
+            className="flex flex-wrap items-center gap-4 md:justify-end"
+            initial={reduce ? false : { opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: EXPO, delay: 1.25 }}
+          >
+            <Magnetic>
+              <button
+                type="button"
+                onClick={() => scrollToTarget('#journey')}
+                className="group inline-flex items-center gap-3 rounded-full bg-gold px-7 py-4 text-sm font-bold uppercase tracking-[0.12em] text-night shadow-[0_12px_40px_-12px_rgba(253,185,19,0.7)] transition-colors hover:bg-flood"
+              >
+                Begin the journey
+                <ArrowDown className="h-4 w-4 transition-transform duration-500 group-hover:translate-y-1" />
+              </button>
+            </Magnetic>
+            <Magnetic>
+              <button
+                type="button"
+                onClick={() => scrollToTarget('#reel')}
+                className="group inline-flex items-center gap-3 rounded-full border border-flood/25 px-6 py-4 text-sm font-bold uppercase tracking-[0.12em] text-flood transition-colors hover:border-gold hover:text-gold"
+              >
+                <Play className="h-4 w-4 fill-current" />
+                Watch the finishes
+              </button>
+            </Magnetic>
+          </motion.div>
         </div>
-    );
+
+        {/* A broadcast caption from the night it all came together. */}
+        <motion.div
+          className="mt-12 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-flood/10 pt-5 text-xs uppercase tracking-[0.18em] text-dust md:mt-16"
+          initial={reduce ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.2, delay: 1.6 }}
+        >
+          <span className="inline-flex items-center gap-2 text-gold">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold opacity-60" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-gold" />
+            </span>
+            Wankhede · 2 April 2011
+          </span>
+          <span className="tnum text-chalk">IND 277/4 (48.2)</span>
+          <span className="tnum text-chalk">Dhoni 91* (79)</span>
+          <span className="hidden sm:inline">India win by 6 wickets</span>
+        </motion.div>
+      </motion.div>
+    </section>
+  );
 }

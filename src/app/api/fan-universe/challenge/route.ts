@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { readJson } from "@/lib/validate";
 
 type Mode = "pressure" | "captaincy";
 type Question = {
@@ -7,12 +8,6 @@ type Question = {
   options: string[];
   bestAnswerIndex: number;
   context: string;
-};
-
-type EvaluatePayload = {
-  mode: Mode;
-  questions: Question[];
-  answers: number[];
 };
 
 const pressurePool: Question[] = [
@@ -91,115 +86,144 @@ const captaincyPool: Question[] = [
   },
 ];
 
-function pickRandomQuestions(mode: Mode, count = 3): Question[] {
-  const pool = mode === "pressure" ? pressurePool : captaincyPool;
-  const shuffled = [...pool].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, count);
+const byId = new Map([...pressurePool, ...captaincyPool].map((q) => [q.id, q]));
+
+/** Questions as the client sees them: no answer key. */
+function publicQuestion({ id, prompt, options }: Question) {
+  return { id, prompt, options };
 }
 
-function computeScore(questions: Question[], answers: number[]) {
-  return questions.reduce(
-    (acc, q, i) => acc + (answers[i] === q.bestAnswerIndex ? 1 : 0),
-    0
-  );
+function pickRandomQuestions(mode: Mode, count = 3): Question[] {
+  const pool = [...(mode === "pressure" ? pressurePool : captaincyPool)];
+  // Fisher-Yates: an unbiased shuffle.
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  return pool.slice(0, count);
 }
 
 async function askGemini(prompt: string): Promise<string | null> {
   const key = process.env.GEMINI_API_KEY;
   if (!key) return null;
-  const url =
-    "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
-  const res = await fetch(`${url}?key=${key}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-    }),
-  });
-  if (!res.ok) return null;
-  const data = (await res.json()) as {
-    candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
-  };
-  return data.candidates?.[0]?.content?.parts?.[0]?.text ?? null;
+  const model = process.env.GEMINI_MODEL ?? "gemini-2.5-flash";
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-goog-api-key": key },
+      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+      signal: AbortSignal.timeout(9000),
+    });
+    if (!res.ok) return null;
+    const data = (await res.json()) as { candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }> };
+    return data.candidates?.[0]?.content?.parts?.[0]?.text ?? null;
+  } catch {
+    return null;
+  }
 }
 
 async function askOpenRouter(prompt: string): Promise<string | null> {
   const key = process.env.OPENROUTER_API_KEY;
   if (!key) return null;
   const model = process.env.OPENROUTER_MODEL ?? "google/gemini-2.0-flash-exp:free";
-  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${key}`,
-    },
-    body: JSON.stringify({
-      model,
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a concise cricket tactics evaluator. Return 3 short bullet points and one final rating out of 10.",
-        },
-        { role: "user", content: prompt },
-      ],
-      temperature: 0.4,
-    }),
-  });
-  if (!res.ok) return null;
-  const data = (await res.json()) as {
-    choices?: Array<{ message?: { content?: string } }>;
-  };
-  return data.choices?.[0]?.message?.content ?? null;
+  try {
+    const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: "system", content: "You are a concise cricket tactics evaluator. Return 3 short bullet points and one final rating out of 10." },
+          { role: "user", content: prompt },
+        ],
+        temperature: 0.4,
+      }),
+      signal: AbortSignal.timeout(9000),
+    });
+    if (!res.ok) return null;
+    const data = (await res.json()) as { choices?: Array<{ message?: { content?: string } }> };
+    return data.choices?.[0]?.message?.content ?? null;
+  } catch {
+    return null;
+  }
 }
 
-async function evaluateWithAi(payload: EvaluatePayload, score: number) {
-  const prompt = `
-Mode: ${payload.mode}
-Questions: ${JSON.stringify(payload.questions)}
-User answers: ${JSON.stringify(payload.answers)}
-Raw score: ${score}/${payload.questions.length}
-Give feedback in plain text.
-`;
+type Graded = { question: Question; answer: number; correct: boolean };
+
+function localFeedback(graded: Graded[]) {
+  const score = graded.filter((g) => g.correct).length;
+  const verdict =
+    score === graded.length
+      ? "Ice in the veins. That is exactly how he would have played it."
+      : score === 0
+        ? "The crowd got to you. Slow the moment down and play the percentages."
+        : "Good instincts, a couple of rushed calls. Control the equation before you chase the boundary.";
+  return verdict;
+}
+
+async function evaluate(mode: Mode, graded: Graded[]) {
+  const score = graded.filter((g) => g.correct).length;
+  // The prompt is built only from server-side data, never from client text.
+  const lines = graded
+    .map((g, i) => `${i + 1}. ${g.question.prompt}
+   Chose: ${g.question.options[g.answer]}
+   Best: ${g.question.options[g.question.bestAnswerIndex]} (${g.question.context})`)
+    .join("\n");
+  const prompt = `Mode: ${mode}
+Score: ${score}/${graded.length}
+${lines}
+Give feedback in plain text.`;
+
   const gemini = await askGemini(prompt);
   if (gemini) return { provider: "gemini", feedback: gemini };
   const openRouter = await askOpenRouter(prompt);
   if (openRouter) return { provider: "openrouter", feedback: openRouter };
-  return {
-    provider: "local",
-    feedback:
-      "No AI key configured. You played with good intent. Improve by balancing risk, strike rotation, and situational awareness.",
-  };
+  return { provider: "local", feedback: localFeedback(graded) };
 }
 
 export async function POST(request: Request) {
-  try {
-    const body = (await request.json()) as
-      | { action: "generate"; mode: Mode }
-      | ({ action: "evaluate" } & EvaluatePayload);
+  const body = await readJson(request);
+  const mode: Mode = body?.mode === "captaincy" ? "captaincy" : "pressure";
 
-    if (body.action === "generate") {
-      const questions = pickRandomQuestions(body.mode, 3);
-      return NextResponse.json({ success: true, data: { questions } }, { status: 200 });
+  if (body?.action === "generate") {
+    const questions = pickRandomQuestions(mode, 3).map(publicQuestion);
+    return NextResponse.json({ success: true, data: { questions } }, { status: 200 });
+  }
+
+  if (body?.action === "evaluate" && Array.isArray(body.answers)) {
+    const graded: Graded[] = [];
+    for (const item of body.answers.slice(0, 5)) {
+      const id = (item as { id?: unknown })?.id;
+      const answer = (item as { answer?: unknown })?.answer;
+      const question = typeof id === "string" ? byId.get(id) : undefined;
+      if (!question || typeof answer !== "number" || !Number.isInteger(answer) || answer < 0 || answer >= question.options.length) {
+        return NextResponse.json({ success: false, error: "Answer every scenario before checking results." }, { status: 400 });
+      }
+      graded.push({ question, answer, correct: answer === question.bestAnswerIndex });
+    }
+    if (!graded.length) {
+      return NextResponse.json({ success: false, error: "Answer every scenario before checking results." }, { status: 400 });
     }
 
-    const score = computeScore(body.questions, body.answers);
-    const ai = await evaluateWithAi(body, score);
+    const ai = await evaluate(mode, graded);
     return NextResponse.json(
       {
         success: true,
         data: {
-          score,
-          total: body.questions.length,
+          score: graded.filter((g) => g.correct).length,
+          total: graded.length,
+          breakdown: graded.map((g) => ({
+            id: g.question.id,
+            correct: g.correct,
+            bestAnswerIndex: g.question.bestAnswerIndex,
+            context: g.question.context,
+          })),
           ...ai,
         },
       },
-      { status: 200 }
-    );
-  } catch {
-    return NextResponse.json(
-      { success: false, error: "Failed to process challenge request." },
-      { status: 500 }
+      { status: 200 },
     );
   }
+
+  return NextResponse.json({ success: false, error: "Unknown challenge request." }, { status: 400 });
 }
