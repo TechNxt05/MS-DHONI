@@ -3,7 +3,8 @@
 import { useSyncExternalStore } from 'react';
 
 /**
- * Visitor preference for the live WebGL scenes (the hero ball and the fan globe).
+ * Visitor preference for the 3D effects: the WebGL scenes (hero ball, fan globe),
+ * the photo ring and the card tilt.
  * On by default; stored per browser. Turning it off swaps in static stand-ins,
  * while every other animation keeps playing.
  */

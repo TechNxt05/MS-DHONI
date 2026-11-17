@@ -14,7 +14,7 @@ export default function ThreeDToggle() {
       role="switch"
       aria-checked={on}
       onClick={() => setThreeD(!on)}
-      title={on ? 'Turn off 3D if the page feels slow' : 'Turn the 3D ball and globe back on'}
+      title={on ? 'Turn off 3D if the page feels slow' : 'Turn the 3D ball, globe, photo ring and card tilt back on'}
       className="group inline-flex items-center gap-3 rounded-full border border-flood/15 py-2 pl-4 pr-2 text-sm text-chalk transition-colors hover:border-gold hover:text-flood"
     >
       <Box className="h-4 w-4 text-gold" aria-hidden />

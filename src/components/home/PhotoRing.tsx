@@ -2,6 +2,7 @@
 
 import { motion, useAnimationFrame, useInView, useMotionValue, useScroll, useTransform, useVelocity } from 'framer-motion';
 import { useReducedMotion } from '@/lib/motion';
+import { useThreeD } from '@/lib/three-pref';
 import { useEffect, useRef, useState } from 'react';
 import { photo } from '@/lib/photos';
 import { Reveal, SplitReveal } from '@/components/fx/primitives';
@@ -26,6 +27,7 @@ const ring = [
 
 export default function PhotoRing() {
   const reduce = useReducedMotion();
+  const threeD = useThreeD();
   const [open, setOpen] = useState<number | null>(null);
   const [radius, setRadius] = useState(560);
   const [card, setCard] = useState(240);
@@ -53,7 +55,7 @@ export default function PhotoRing() {
   }, []);
 
   useAnimationFrame((_, delta) => {
-    if (dragging.current || !inView) return;
+    if (dragging.current || !inView || !threeD) return;
     const auto = reduce ? 0 : 0.006 * delta;
     velocity.current *= 0.94;
     rotation.set(rotation.get() - auto + velocity.current);
@@ -94,10 +96,31 @@ export default function PhotoRing() {
           className="font-display text-[clamp(3rem,8vw,6rem)] font-black uppercase leading-[0.85] tracking-[-0.02em]"
         />
         <Reveal delay={0.15}>
-          <p className="mx-auto mt-5 max-w-[44ch] text-chalk">Drag to spin the stand. Tap a frame to step inside it.</p>
+          <p className="mx-auto mt-5 max-w-[44ch] text-chalk">
+            {threeD ? 'Drag to spin the stand.' : 'Scroll along the stand.'} Tap a frame to step inside it.
+          </p>
         </Reveal>
       </div>
 
+      {!threeD ? (
+        // Flat strip used when 3D is off: same frames, no perspective.
+        <div className="relative mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-6 sm:px-8 [scrollbar-width:thin]">
+          {ring.map((p, i) => (
+            <button
+              key={p.src}
+              type="button"
+              onClick={() => setOpen(i)}
+              aria-label={`Open photo: ${p.alt}`}
+              className="relative shrink-0 snap-center overflow-hidden rounded-2xl border border-flood/15 bg-pitch transition-colors hover:border-gold"
+              style={{ width: card, height: card * 1.35 }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={p.src} alt="" loading="lazy" decoding="async" draggable={false} className="h-full w-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-night/70 via-transparent to-transparent" />
+            </button>
+          ))}
+        </div>
+      ) : (
       <div
         className="relative mx-auto mt-4 flex h-[min(62vh,560px)] touch-pan-y select-none items-center justify-center"
         style={{ perspective: 2400 }}
@@ -135,6 +158,7 @@ export default function PhotoRing() {
         {/* Pitch-light reflection beneath the ring. */}
         <div aria-hidden className="pointer-events-none absolute bottom-0 left-1/2 h-24 w-[70%] -translate-x-1/2 rounded-[50%] bg-gold/10 blur-3xl" />
       </div>
+      )}
 
       <Lightbox photos={ring} index={open} onChange={setOpen} onClose={() => setOpen(null)} />
     </section>

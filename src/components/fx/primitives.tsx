@@ -13,6 +13,7 @@ import {
   type MotionValue,
 } from 'framer-motion';
 import { useReducedMotion } from '@/lib/motion';
+import { useThreeD } from '@/lib/three-pref';
 import { useEffect, useRef, useState, type ReactNode, type PointerEvent as ReactPointerEvent } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -184,6 +185,7 @@ export function Tilt({
     ([x, y]) => `radial-gradient(circle at ${x} ${y}, rgba(255,240,200,0.28), transparent 55%)`,
   );
   const [active, setActive] = useState(false);
+  const threeD = useThreeD();
 
   const onMove = (e: ReactPointerEvent) => {
     if (e.pointerType !== 'mouse' || !ref.current) return;
@@ -196,6 +198,9 @@ export function Tilt({
     py.set(0.5);
     setActive(false);
   };
+
+  // With 3D off the card sits flat.
+  if (!threeD) return <div className={cn('relative', className)}>{children}</div>;
 
   return (
     <div style={{ perspective: 1000 }} className={className}>
