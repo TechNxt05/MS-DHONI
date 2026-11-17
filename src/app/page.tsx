@@ -7,7 +7,7 @@ import Explore from '@/components/home/Explore';
 import OnThisDay from '@/components/home/OnThisDay';
 import Gallery from '@/components/home/Gallery';
 import Ticker from '@/components/home/Ticker';
-import SubscribeBox from '@/components/home/SubscribeBox';
+import TodayBox from '@/components/home/TodayBox';
 import { photos } from '@/lib/photos';
 
 export default function Home() {
@@ -18,9 +18,11 @@ export default function Home() {
     <main>
       <Hero />
       <Ticker />
-      <section aria-label="Daily email" className="bg-night px-4 py-14 sm:px-8 md:py-20">
-        <SubscribeBox className="mx-auto max-w-[1500px]" />
-      </section>
+      <div className="bg-night px-4 py-14 sm:px-8 md:py-20">
+        <div className="mx-auto max-w-[1500px]">
+          <TodayBox />
+        </div>
+      </div>
       <CareerTimeline />
       <StatsDashboard />
       <HighlightReel />

@@ -6,7 +6,7 @@ import { useId, useState, type FormEvent } from 'react';
 import { cn } from '@/lib/utils';
 
 /** Sign up for the daily On This Day email (double opt-in via /api/subscribe). */
-export default function SubscribeBox({ className }: { className?: string }) {
+export default function SubscribeBox({ className, bare = false }: { className?: string; bare?: boolean }) {
   const id = useId();
   const [email, setEmail] = useState('');
   const [state, setState] = useState<'idle' | 'sending' | 'done' | 'error'>('idle');
@@ -32,17 +32,17 @@ export default function SubscribeBox({ className }: { className?: string }) {
   };
 
   return (
-    <div className={cn('relative overflow-hidden rounded-[26px] border border-gold/25 bg-night p-6 md:p-7', className)}>
-      <div aria-hidden className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-gold/15 blur-3xl" />
+    <div className={cn('relative', !bare && 'overflow-hidden rounded-[26px] border border-gold/25 bg-night p-6 md:p-7', className)}>
+      {!bare && <div aria-hidden className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-gold/15 blur-3xl" />}
       <p className="relative flex items-center gap-2 text-sm font-semibold text-gold">
         <Mail className="h-4 w-4" />
         Daily email
       </p>
       <h3 className="relative mt-3 font-display text-[clamp(1.7rem,3vw,2.4rem)] font-black uppercase leading-[0.92]">
-        Start your morning with a <span className="text-gold">helicopter shot.</span>
+        Start your morning with <span className="text-gold">beautiful memories of MS Dhoni.</span>
       </h3>
-      <p className="relative mt-3 max-w-[44ch] text-chalk">
-        Some people need coffee. You need Thala. One MS Dhoni memory lands in your inbox every morning: the match, the moment and the video to relive it.
+      <p className="relative mt-3 max-w-[60ch] text-chalk">
+        Every morning, that day’s Dhoni moments land in your inbox: the photo, the story and the YouTube video to relive it.
       </p>
 
       <AnimatePresence mode="wait" initial={false}>

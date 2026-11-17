@@ -30,3 +30,13 @@ export const videosOn = (date: string) => youtubeVideos.filter((v) => v.date ===
 export function youtubeSearch(q: string) {
   return `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;
 }
+
+/** The best YouTube link for an event: its verified video, or a search that should find it. */
+export function eventVideo(e: { date: string; year: number; title: string; match: { bestScore: string | null; opponent: string; competition: string } | null }) {
+  const v = videosOn(e.date)[0];
+  if (v) return { url: youtubeWatch(v.id), verified: true as const, video: v };
+  const q = e.match
+    ? `MS Dhoni ${e.match.bestScore ?? ''} ${e.match.opponent} ${e.year} ${e.match.competition} highlights`
+    : `MS Dhoni ${e.title} ${e.year}`;
+  return { url: youtubeSearch(q.replace(/\s+/g, ' ').trim()), verified: false as const, video: null };
+}
