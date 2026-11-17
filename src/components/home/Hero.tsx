@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useReducedMotion } from '@/lib/motion';
+import { useThreeD } from '@/lib/three-pref';
 import { ArrowDown, Play } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Magnetic } from '@/components/fx/primitives';
@@ -36,6 +37,7 @@ const backdrop = photo('field-marshal');
 export default function Hero() {
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
+  const threeD = useThreeD();
   // Load the 3D ball once the browser is idle after first paint; the static ball stands in until then.
   const [idle, setIdle] = useState(false);
   useEffect(() => {
@@ -121,7 +123,7 @@ export default function Hero() {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1.2, delay: 0.6 }}
               >
-                {reduce || !idle ? <StaticBall /> : <BallScene progress={scrollYProgress} className="absolute inset-0" />}
+                {reduce || !idle || !threeD ? <StaticBall /> : <BallScene progress={scrollYProgress} className="absolute inset-0" />}
               </motion.span>
             </span>
             {letter('N', 3)}

@@ -12,6 +12,8 @@ import { photo } from '@/lib/photos';
 import { thalaReason } from '@/lib/thala';
 import { cn } from '@/lib/utils';
 import type { GlobePin } from '@/components/three/FanGlobe';
+import FlatPinMap from '@/components/three/FlatPinMap';
+import { useThreeD } from '@/lib/three-pref';
 import { TABS, type Tab } from './tabs';
 
 const FanGlobe = dynamic(() => import('@/components/three/FanGlobe'), {
@@ -298,6 +300,7 @@ function FanMap() {
     };
   }, []);
 
+  const threeD = useThreeD();
   const globePins: GlobePin[] = useMemo(() => pins.map((p) => ({ id: p._id, lat: p.lat, lon: p.lon, label: `${p.city}, ${p.country}` })), [pins]);
 
   const submit = async (e: FormEvent) => {
@@ -339,7 +342,11 @@ function FanMap() {
         <h2 className="font-display text-5xl font-black uppercase leading-[0.9] md:text-6xl">One man. Every time zone.</h2>
         <p className="mt-3 max-w-[50ch] text-chalk">Every pin is a fan. Every arc starts in Ranchi, where he did. Drag to turn the planet.</p>
         <div className="relative mt-6 aspect-square w-full overflow-hidden rounded-[32px] border border-flood/10 bg-[radial-gradient(circle_at_50%_45%,#101826,#06070a_70%)]">
-          <FanGlobe pins={globePins} focus={focus} className="absolute inset-0" />
+          {threeD ? (
+            <FanGlobe pins={globePins} focus={focus} className="absolute inset-0" />
+          ) : (
+            <FlatPinMap pins={globePins} focus={focus} className="absolute inset-0" />
+          )}
           <p className="pointer-events-none absolute bottom-4 left-5 flex items-center gap-4 text-xs uppercase tracking-[0.14em] text-dust">
             <span className="inline-flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-blue" /> Ranchi</span>
             <span className="inline-flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-gold" /> Fans</span>

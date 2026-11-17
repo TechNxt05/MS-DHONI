@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import ThreeDToggle from './ThreeDToggle';
 
 const links = [
   { name: 'Story', href: '/biography' },
@@ -44,7 +45,10 @@ export default function Footer() {
 
         <div className="mt-10 flex flex-col gap-3 border-t border-flood/10 pt-6 text-sm text-dust md:flex-row md:items-center md:justify-between">
           <p>Made by Amritanshu Yadav, a fan. Not affiliated with MS Dhoni, the BCCI or Chennai Super Kings.</p>
-          <p className="tnum">2007 · 2011 · 2013 · © {new Date().getFullYear()}</p>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+            <ThreeDToggle />
+            <p className="tnum">2007 · 2011 · 2013 · © {new Date().getFullYear()}</p>
+          </div>
         </div>
       </div>
     </footer>
