@@ -1,4 +1,5 @@
 import { getDay, type DayEvent } from './onThisDay';
+import { videosOn, youtubeSearch, youtubeThumb, youtubeWatch } from './videos';
 
 /**
  * The daily "On this day" email: the same events as /on-this-day, laid out with inline styles
@@ -19,6 +20,15 @@ export function dayLabel(key: string) {
   return `${d} ${MONTHS[m - 1]}`;
 }
 
+/** A YouTube search that finds the event, for days without a verified video. */
+function searchFor(e: DayEvent) {
+  if (e.match) return youtubeSearch(`MS Dhoni ${e.match.bestScore ?? ''} ${e.match.opponent} ${e.year} ${e.match.competition} highlights`.replace(/\s+/g, ' '));
+  return youtubeSearch(`MS Dhoni ${e.title} ${e.year}`);
+}
+
+/** Replaced per recipient by personalize(). */
+export const UNSUBSCRIBE_SLOT = '%%UNSUBSCRIBE%%';
+
 function kindLabel(e: DayEvent) {
   if (e.match) return `${e.match.format} · ${e.match.competition}`;
   return { 'test-day': 'Test match day', life: 'Life', career: 'Career', honour: 'Honour', service: 'Army', culture: 'Culture', match: 'Match' }[e.kind];
@@ -37,6 +47,26 @@ export function buildDigest(key: string) {
   const font = "font-family:'Helvetica Neue',Arial,sans-serif;";
   const display = "font-family:Impact,'Arial Narrow Bold','Helvetica Neue',Arial,sans-serif;text-transform:uppercase;letter-spacing:0.5px;";
 
+  const videoLink = (e: DayEvent) => {
+    const v = videosOn(e.date)[0];
+    return v
+      ? `<a href="${youtubeWatch(v.id)}" style="color:${C.gold};font-weight:bold;text-decoration:none">&#9654; Watch on YouTube: ${esc(v.title)} (${esc(v.channel)})</a>`
+      : `<a href="${searchFor(e)}" style="color:${C.blue};text-decoration:none">&#9654; Find this on YouTube</a>`;
+  };
+  const videoBlock = (e: DayEvent) => {
+    const vids = videosOn(e.date);
+    if (!vids.length) return `<p style="margin:14px 0 0;font-size:14px">${videoLink(e)}</p>`;
+    return vids
+      .map(
+        (v) => `<a href="${youtubeWatch(v.id)}" style="display:block;margin-top:16px;text-decoration:none">
+          <img src="${youtubeThumb(v.id)}" width="536" alt="Play: ${esc(v.title)}" style="display:block;width:100%;max-width:536px;height:auto;border:0;border-radius:12px">
+          <span style="display:block;margin-top:8px;font-size:14px;color:${C.gold};font-weight:bold">&#9654; ${esc(v.title)}</span>
+          <span style="display:block;font-size:12px;color:${C.dust}">${esc(v.channel)} on YouTube</span>
+        </a>`,
+      )
+      .join('');
+  };
+
   const leadHtml = lead
     ? `
       ${lead.photo ? `<tr><td style="padding:0"><img src="${site}${esc(emailImage(lead.photo))}" width="600" height="338" alt="" style="display:block;width:100%;max-width:600px;height:auto;border:0"></td></tr>` : ''}
@@ -45,6 +75,7 @@ export function buildDigest(key: string) {
         <div style="font-size:13px;color:${C.dust};margin-top:6px">${esc(kindLabel(lead))}${!lead.photoExact && lead.photo ? ' · illustrative photo' : ''}</div>
         <div style="${display}font-size:30px;line-height:1.05;color:${C.flood};margin-top:14px">${esc(lead.title)}</div>
         <p style="font-size:16px;line-height:1.6;color:${C.chalk};margin:14px 0 0">${esc(lead.description)}</p>
+        ${videoBlock(lead)}
       </td></tr>`
     : `
       <tr><td style="padding:36px 32px 8px;${font}">
@@ -60,6 +91,7 @@ export function buildDigest(key: string) {
         <span style="font-size:12px;color:${C.dust};padding-left:8px">${esc(kindLabel(e))}</span>
         <div style="${display}font-size:19px;line-height:1.1;color:${C.flood};margin-top:6px">${esc(e.title)}</div>
         <p style="font-size:14px;line-height:1.55;color:${C.chalk};margin:8px 0 0">${esc(e.description)}</p>
+        <p style="margin:8px 0 0;font-size:13px">${videoLink(e)}</p>
       </td></tr>`,
     )
     .join('');
@@ -86,7 +118,7 @@ export function buildDigest(key: string) {
   </table>
   <p style="${font}font-size:12px;line-height:1.6;color:${C.dust};max-width:560px;margin:18px auto 0">
     A daily note from a non-commercial MS Dhoni fan tribute. Match figures from Cricsheet scorecards.<br>
-    You are receiving this because the site owner added your address. Reply to this email to be removed.
+    ${UNSUBSCRIBE_SLOT}
   </p>
 </td></tr></table>
 </body></html>`;
@@ -94,12 +126,22 @@ export function buildDigest(key: string) {
   const text = [
     `On ${label}`,
     '',
-    ...day.events.map((e) => `${e.year} · ${e.title}\n${e.description}\n`),
+    ...day.events.map((e) => `${e.year} · ${e.title}\n${e.description}\n${videosOn(e.date)[0] ? `Watch: ${youtubeWatch(videosOn(e.date)[0].id)}` : `YouTube: ${searchFor(e)}`}\n`),
     day.events.length ? '' : `A rest day. Nearest memories: ${dayLabel(day.prev)} and ${dayLabel(day.next)}.`,
     `See the full day: ${link}`,
     '',
-    'Reply to this email to be removed.',
+    UNSUBSCRIBE_SLOT,
   ].join('\n');
 
   return { subject, html, text, total: day.total };
+}
+
+/** Fill the footer for one recipient: a personal unsubscribe link, or a reply-to-remove note. */
+export function personalize(text: string, unsubscribeUrl: string | null, html: boolean) {
+  const line = unsubscribeUrl
+    ? html
+      ? `You signed up on the site. <a href="${unsubscribeUrl}" style="color:#8a867d">Unsubscribe</a> any time.`
+      : `Unsubscribe: ${unsubscribeUrl}`
+    : 'You are receiving this because the site owner added your address. Reply to this email to be removed.';
+  return text.split(UNSUBSCRIBE_SLOT).join(line);
 }

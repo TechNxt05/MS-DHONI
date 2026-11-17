@@ -40,6 +40,9 @@ export default function SmoothScroll() {
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
       anchors: { offset: -80 },
+      // Let inner scrollers (menu, tab bars, strips, side panels) take wheel, trackpad and touch
+      // gestures themselves instead of Lenis swallowing them, even while the page is locked.
+      allowNestedScroll: true,
     });
     lenisInstance = lenis;
 

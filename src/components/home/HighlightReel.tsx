@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Pause, Play, Volume2, VolumeX } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { clips } from '@/lib/dhoni';
+import { youtubeThumb, youtubeVideos } from '@/lib/videos';
 import { Reveal, SplitReveal } from '@/components/fx/primitives';
 import { cn } from '@/lib/utils';
 
@@ -169,7 +170,56 @@ export default function HighlightReel() {
             </ul>
           </Reveal>
         </div>
+
+        <YouTubeShelf />
       </div>
     </section>
+  );
+}
+
+/** Verified YouTube videos. The player only loads when a card is clicked. */
+function YouTubeShelf() {
+  const [playingId, setPlayingId] = useState<string | null>(null);
+  return (
+    <div className="mt-20">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <h3 className="font-display text-[clamp(2rem,4vw,3.2rem)] font-black uppercase leading-none">
+          On <span className="text-gold">YouTube</span>
+        </h3>
+        <p className="max-w-[44ch] text-sm text-dust">From the ICC, Cricbuzz, ESPNcricinfo and other official channels. Plays here; nothing loads from YouTube until you press play.</p>
+      </div>
+      <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {youtubeVideos.map((v) => (
+          <li key={v.id}>
+            <div className="overflow-hidden rounded-2xl border border-flood/10 bg-night">
+              <div className="relative aspect-video">
+                {playingId === v.id ? (
+                  <iframe
+                    src={`https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&rel=0`}
+                    title={v.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="absolute inset-0 h-full w-full"
+                  />
+                ) : (
+                  <button type="button" onClick={() => setPlayingId(v.id)} aria-label={`Play: ${v.title}`} className="group absolute inset-0" data-cursor="Play">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={youtubeThumb(v.id)} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <span className="absolute inset-0 bg-night/30 transition-colors group-hover:bg-night/10" />
+                    <span className="absolute left-1/2 top-1/2 grid h-14 w-14 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-gold text-night shadow-[0_10px_30px_-10px_rgba(253,185,19,0.8)] transition-transform duration-500 group-hover:scale-110">
+                      <Play className="ml-0.5 h-5 w-5 fill-current" />
+                    </span>
+                  </button>
+                )}
+              </div>
+              <div className="p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-gold">{v.channel}</p>
+                <p className="mt-1 line-clamp-2 font-semibold leading-snug text-flood">{v.title}</p>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

@@ -135,16 +135,21 @@ To regenerate, download these Cricsheet archives into one folder, unzipped one p
 
 ## Daily "On this day" email
 
-Every morning at about 7:00 IST, Vercel Cron (`vercel.json`) calls `/api/cron/on-this-day-mail`. The route emails that day's events, sent from Gmail to everyone in `DIGEST_RECIPIENTS` as Bcc.
+Every morning at about 7:00 IST, Vercel Cron (`vercel.json`) calls `/api/cron/on-this-day-mail`. The route emails that day's events through Gmail. Each event links to YouTube: a verified official video where one exists (`src/lib/videos.ts`), otherwise a YouTube search for that match.
 
+**Recipients:**
+- **Sign-ups from the site:** the box on the home page and on `/on-this-day`. Sign-up is double opt-in: `/api/subscribe` emails a confirmation link, and only confirmed addresses get the digest. Every digest carries a personal unsubscribe link plus `List-Unsubscribe` headers, so Gmail shows its own Unsubscribe button. Subscribers are stored in MongoDB (`src/models/Subscriber.ts`).
+- **`DIGEST_RECIPIENTS` (optional):** a comma-separated list the owner adds by hand.
+
+**Setup:**
 1. **Turn on 2-Step Verification** on the sending Gmail account, then create an **App password** at https://myaccount.google.com/apppasswords.
 2. **Add these in Vercel** under Project → Settings → Environment Variables (Production), then redeploy:
-   - `CRON_SECRET`: any long random string. Vercel sends it automatically on cron calls.
-   - `GMAIL_USER` and `GMAIL_APP_PASSWORD`.
-   - `DIGEST_RECIPIENTS`: comma-separated addresses.
-   - `SITE_URL` (optional).
+   - `CRON_SECRET`, `GMAIL_USER`, `GMAIL_APP_PASSWORD`.
+   - `MONGODB_URI`, needed for sign-ups.
+   - `DIGEST_RECIPIENTS` and `SITE_URL` (both optional).
 3. **Test it:**
-   - Run it now from Vercel → Project → Settings → Cron Jobs → **Run**.
+   - Sign up on the site with your own address and confirm it.
+   - Run the job from Vercel → Settings → Cron Jobs → **Run**.
    - Or preview without sending: `curl -H "Authorization: Bearer $CRON_SECRET" "https://<site>/api/cron/on-this-day-mail?preview=1&d=04-02"`.
 
 Email images are landscape JPEG cuts in `public/email/`. Run `npm run email:images` after adding photos.

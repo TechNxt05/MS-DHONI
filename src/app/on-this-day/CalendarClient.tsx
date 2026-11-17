@@ -5,6 +5,7 @@ import { useReducedMotion } from '@/lib/motion';
 import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import PageHero from '@/components/layout/PageHero';
+import SubscribeBox from '@/components/home/SubscribeBox';
 import { Reveal } from '@/components/fx/primitives';
 import type { DayEvent, DaySummary } from '@/lib/onThisDay';
 import { photo } from '@/lib/photos';
@@ -220,6 +221,10 @@ export default function CalendarClient({
             </div>
           </div>
         </div>
+      </section>
+
+      <section aria-label="Daily email" className="mx-auto max-w-[900px] px-4 pb-28 sm:px-8">
+        <SubscribeBox />
       </section>
     </main>
   );

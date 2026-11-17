@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight, ArrowUpRight, RotateCcw } from 'lucide-react';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 import { Reveal } from '@/components/fx/primitives';
+import SubscribeBox from './SubscribeBox';
 import type { DayEvent } from '@/lib/onThisDay';
 
 interface DayPayload {
@@ -146,6 +147,7 @@ export default function OnThisDay() {
             Open the full calendar
             <ArrowUpRight className="h-4 w-4" />
           </Link>
+          <SubscribeBox className="mt-10" />
         </div>
 
         <div aria-busy={status === 'loading'}>

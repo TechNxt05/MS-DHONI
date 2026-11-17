@@ -131,7 +131,8 @@ export default function Navbar() {
             role="dialog"
             aria-modal="true"
             aria-label="Site menu"
-            className="fixed inset-0 z-[75] overflow-y-auto bg-night"
+            data-lenis-prevent
+            className="fixed inset-0 z-[75] overflow-y-auto overscroll-contain bg-night"
             initial={{ clipPath: 'circle(0% at calc(100% - 3.5rem) 2.5rem)' }}
             animate={{ clipPath: 'circle(150% at calc(100% - 3.5rem) 2.5rem)' }}
             exit={{ clipPath: 'circle(0% at calc(100% - 3.5rem) 2.5rem)' }}
